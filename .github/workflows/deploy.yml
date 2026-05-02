@@ -1,0 +1,29 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install
+      - run: npm run build
+
+      - name: Deploy to VPS via rsync
+        uses: up9cloud/action-rsync@v1.4
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          USER: ${{ secrets.VPS_USER }}
+          KEY: ${{ secrets.VPS_SSH_KEY }}
+          SOURCE: out/
+          TARGET: /var/www/catecismo/
+          ARGS: -avz --delete
+          POST_SCRIPT: chown -R ubuntu:ubuntu /var/www/catecismo/
