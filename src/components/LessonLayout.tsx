@@ -94,11 +94,6 @@ export default function LessonLayout({
 
   const sectionPath = `/${langPrefix}/${section}`;
 
-  /* ── Language toggle ── */
-  const switchLangUrl = isEn
-    ? `/${sectionUrlMap[internalSection]?.es || section}/${rawSlug}`
-    : `/en/${sectionUrlMap[internalSection]?.en || section}/${rawSlug}`;
-
   /* ── Tab configuration ── */
   const tabs = [
     {
@@ -133,18 +128,6 @@ export default function LessonLayout({
         <Link href={sectionPath}>{sectionLabel}</Link>
         <span className="sep" aria-hidden="true">/</span>
         <span className="current" aria-current="page">{title}</span>
-
-        {/* Language switcher (right-aligned) */}
-        <div style={{ marginLeft: "auto" }}>
-          <div className="lang-switcher" role="group" aria-label="Language switcher">
-            <Link href={switchLangUrl} className={!isEn ? "active" : ""} aria-label="Español">
-              ES
-            </Link>
-            <Link href={switchLangUrl} className={isEn ? "active" : ""} aria-label="English">
-              EN
-            </Link>
-          </div>
-        </div>
       </nav>
 
       {/* ── Lesson Header ── */}

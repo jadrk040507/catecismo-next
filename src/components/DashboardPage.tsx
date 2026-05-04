@@ -558,6 +558,7 @@ export default function DashboardPage() {
                 <CatechistDashboard
                   catechistId={user?.email || "unknown"}
                   catechistName={user?.full_name || "User"}
+                  onSelectClass={setSelectedClassId}
                 />
               )}
 

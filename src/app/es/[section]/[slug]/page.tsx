@@ -54,6 +54,7 @@ export default async function LessonPage({ params }: { params: Promise<Params> }
       title={data.title}
       cic={data.cic}
       scripture={data.scripture}
+      htmlContent={data.html}
     >
       <div dangerouslySetInnerHTML={{ __html: data.html }} />
     </LessonLayoutClient>

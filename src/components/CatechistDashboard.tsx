@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "@/lib/auth";
 import {
@@ -44,14 +44,15 @@ interface AugmentedClass extends Clase {
 // ─── Componente ──────────────────────────────────────────────────────────────
 
 export default function CatechistDashboard({
+  onSelectClass,
   catechistId,
   catechistName,
 }: {
+  onSelectClass?: (classId: number) => void;
   catechistId: string;
   catechistName: string;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const isEn = pathname.startsWith("/en");
   const base = isEn ? "/en" : "";
 
@@ -262,7 +263,7 @@ export default function CatechistDashboard({
 
   // ─── Navigate to class detail ────────────────────────────────────────
   function goToClass(classId: number) {
-    router.push(`${base}/dashboard/clase/${classId}`);
+    onSelectClass?.(classId);
   }
 
   // ─── Filtered classes ────────────────────────────────────────────────
