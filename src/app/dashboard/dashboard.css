@@ -405,6 +405,84 @@ html.dashboard-route body {
   font-family: var(--font-sans) !important;
 }
 
+/* ─── ACTIONS BAR ─── */
+.db-actions-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.db-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.db-search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--color-tertiary);
+  pointer-events: none;
+}
+.db-search--with-icon {
+  padding-left: 30px;
+  margin-bottom: 0;
+}
+
+/* ─── CARD META ITEMS (icon + text) ─── */
+.db-card-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ─── DANGER ZONE ─── */
+.db-danger-zone {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border-light);
+}
+.db-danger-zone-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-red);
+  margin-bottom: 8px;
+}
+.db-danger-zone-desc {
+  font-size: 12px;
+  color: var(--color-secondary);
+  margin-bottom: 12px;
+}
+
+/* ─── EMPTY STATE HINT ─── */
+.db-empty-hint {
+  font-size: 13px;
+  color: var(--color-tertiary);
+}
+
+/* ─── LOADING SKELETON VARIANTS ─── */
+.db-skeleton-title { height: 18px; width: 70%; }
+.db-skeleton-desc  { height: 14px; width: 90%; margin-top: 8px; }
+.db-skeleton-meta  { height: 14px; width: 40%; margin-top: 6px; }
+
+/* ─── GHOST DANGER (for card delete icon) ─── */
+.db-btn.ghost.danger {
+  color: var(--color-red);
+  border-color: transparent;
+  background: transparent;
+}
+.db-btn.ghost.danger:hover {
+  background: var(--color-red-soft);
+}
+
+/* ─── ACCESSIBILITY ─── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
 /* ─── ANIMATIONS ─── */
 @keyframes dbFadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes dbSlideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }

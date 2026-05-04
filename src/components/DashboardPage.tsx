@@ -14,11 +14,28 @@ import {
 } from "@/hooks/useData";
 import CatechistDashboard from "@/components/CatechistDashboard";
 import ClassDetail from "@/components/ClassDetail";
+import StudentDashboard from "@/components/StudentDashboard";
+import ParentDashboard from "@/components/ParentDashboard";
+import {
+  LayoutDashboard,
+  Users,
+  School,
+  BookOpen,
+  BarChart3,
+  Settings,
+  LogOut,
+  Home,
+  Shield,
+  UserCheck,
+  GraduationCap,
+  Heart,
+  Menu,
+} from "lucide-react";
 
 type Tab = "overview" | "users" | "classes" | "content" | "analytics" | "settings";
 
 export default function DashboardPage() {
-  const { isLoggedIn, isAdmin, isCatechist, isSuperAdmin, user, loading: authLoading, logout } = useAuth();
+  const { isLoggedIn, isAdmin, isCatechist, isSuperAdmin, isStudent, isParent, user, loading: authLoading, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const isEn = pathname.startsWith("/en");
@@ -45,13 +62,12 @@ export default function DashboardPage() {
 
   const isLoading = statsLoading || usersLoading;
 
-  // Redirect if not catechist
+  // Redirect if not logged in
   useEffect(() => {
-    if (!authLoading && !isCatechist) {
-      if (!isLoggedIn) router.push(`${base}/login`);
-      else router.push("/");
+    if (!authLoading && !isLoggedIn) {
+      router.push(`${base}/login`);
     }
-  }, [authLoading, isCatechist, isLoggedIn, router, base]);
+  }, [authLoading, isLoggedIn, router, base]);
 
   // Promote handler
   async function handlePromote(userId: string) {
@@ -77,7 +93,7 @@ export default function DashboardPage() {
 
   // Delete user (super_admin only)
   async function handleDeleteUser(userId: string) {
-    if (!confirm(isEn ? "Delete this user permanently?" : "¿Eliminar este usuario permanentemente?")) return;
+    if (!confirm(isEn ? "Delete this user permanently?" : "¿Eliminar este usuario permanentamente?")) return;
     try {
       const s = getSupabase();
       await Promise.all([
@@ -135,13 +151,74 @@ export default function DashboardPage() {
       noUsers: { es: "Sin usuarios.", en: "No users." },
       loading: { es: "Cargando…", en: "Loading…" },
       noAccess: { es: "Acceso denegado.", en: "Access denied." },
-      goHome: { es: "← Volver al sitio", en: "← Back to site" },
+      goHome: { es: "Volver al sitio", en: "Back to site" },
       superAdmin: { es: "Super Admin", en: "Super Admin" },
       admin: { es: "Admin", en: "Admin" },
       catechist: { es: "Catequista", en: "Catechist" },
       student: { es: "Estudiante", en: "Student" },
+      parent: { es: "Padre/Tutor", en: "Parent/Guardian" },
+      myLearning: { es: "Mi Aprendizaje", en: "My Learning" },
+      myChildren: { es: "Mis Hijos", en: "My Children" },
+      dashboard: { es: "Dashboard", en: "Dashboard" },
+      permissions: { es: "Permisos", en: "Permissions" },
+      permView: { es: "Ver contenido público", en: "View public content" },
+      permLessons: { es: "Lecciones y cuadernos", en: "Lessons & workbooks" },
+      permClasses: { es: "Gestionar clases", en: "Manage classes" },
+      permUsers: { es: "Gestionar usuarios", en: "Manage users" },
+      permAnalytics: { es: "Ver analíticas", en: "View analytics" },
+      permAdmin: { es: "Panel de administración", en: "Admin panel" },
+      welcomeBack: { es: "Bienvenido de vuelta", en: "Welcome back" },
     }) as Record<string, { es: string; en: string }>)[key]?.[isEn ? "en" : "es"] || key;
 
+  // Role badge component
+  function RoleBadge({ role }: { role: string }) {
+    const config: Record<string, { label: string; className: string; icon: React.ReactNode }> = {
+      super_admin: { label: t("superAdmin"), className: "badge badge-red", icon: <Shield size={11} /> },
+      admin: { label: t("admin"), className: "badge badge-amber", icon: <Shield size={11} /> },
+      catechist: { label: t("catechist"), className: "badge badge-accent", icon: <UserCheck size={11} /> },
+      student: { label: t("student"), className: "badge badge-green", icon: <GraduationCap size={11} /> },
+      parent: { label: t("parent"), className: "badge badge-neutral", icon: <Heart size={11} /> },
+    };
+    const c = config[role] || config.student;
+    return <span className={c.className}>{c.icon} {c.label}</span>;
+  }
+
+  // ─── Sidebar items by role ─────────────────────────────────────
+  const sidebarNavItems = (() => {
+    if (isSuperAdmin || isAdmin) {
+      return (
+        <>
+          <div className="db-sidebar-section">{t("main")}</div>
+          {(["overview", "analytics"] as Tab[]).map(tn => (
+            <button key={tn} className={`db-sidebar-item${tab === tn ? " active" : ""}`} onClick={() => { setTab(tn); setSidebarOpen(false); setSelectedClassId(null); }}>
+              <span className="item-icon">{tn === "overview" ? <LayoutDashboard size={16} /> : <BarChart3 size={16} />}</span>{t(tn)}
+            </button>
+          ))}
+          <div className="db-sidebar-section">{t("manage")}</div>
+          {(["users", "classes", "content"] as Tab[]).map(tn => (
+            <button key={tn} className={`db-sidebar-item${tab === tn ? " active" : ""}`} onClick={() => { setTab(tn); setSidebarOpen(false); setSelectedClassId(null); }}>
+              <span className="item-icon">{tn === "users" ? <Users size={16} /> : tn === "classes" ? <School size={16} /> : <BookOpen size={16} />}</span>{t(tn)}
+              {tn === "users" && users.length > 0 && <span className="db-sidebar-badge">{users.length}</span>}
+            </button>
+          ))}
+        </>
+      );
+    }
+    if (isCatechist) {
+      return (
+        <>
+          <div className="db-sidebar-section">{t("main")}</div>
+          <button className={`db-sidebar-item${tab === "classes" ? " active" : ""}`} onClick={() => { setTab("classes"); setSidebarOpen(false); setSelectedClassId(null); }}>
+            <span className="item-icon"><School size={16} /></span>{t("classes")}
+          </button>
+        </>
+      );
+    }
+    // Student/parent — no admin sidebar tabs needed, their content is rendered directly
+    return null;
+  })();
+
+  // ─── Loading state ────────────────────────────────────────────
   if (authLoading) {
     return (
       <div className="db-layout">
@@ -150,8 +227,99 @@ export default function DashboardPage() {
     );
   }
 
-  if (!isCatechist) return null;
+  if (!isLoggedIn) return null;
 
+  // ─── Student view ────────────────────────────────────────────
+  if (isStudent && !isCatechist) {
+    return (
+      <div className="db-layout">
+        <div className={`db-sidebar-overlay${sidebarOpen ? " open" : ""}`} onClick={() => setSidebarOpen(false)} />
+        <nav className={`db-sidebar${sidebarOpen ? " open" : ""}`}>
+          <div className="db-sidebar-top">
+            <Link href={`${base}/dashboard`} className="db-sidebar-logo" onClick={() => setSidebarOpen(false)}>
+              <span className="db-sidebar-logo-icon">📖</span>Catecismo
+            </Link>
+            <div className="db-sidebar-user">
+              <div className="db-sidebar-avatar">{(user?.full_name || user?.email || "U")[0].toUpperCase()}</div>
+              <div className="db-sidebar-user-info">
+                <div className="db-sidebar-user-name">{user?.full_name || user?.email}</div>
+                <div className="db-sidebar-user-role"><RoleBadge role={user?.role || "student"} /></div>
+              </div>
+            </div>
+          </div>
+          <div className="db-sidebar-nav">
+            <div className="db-sidebar-section">{t("main")}</div>
+            <Link href={isEn ? "/en" : "/"} className="db-sidebar-item">
+              <span className="item-icon"><BookOpen size={16} /></span>{isEn ? "Library" : "Biblioteca"}
+            </Link>
+          </div>
+          <div className="db-sidebar-bottom">
+            <Link href={isEn ? "/en" : "/"} className="db-sidebar-item" style={{ fontSize: 12 }}>{t("goHome")}</Link>
+            <button className="db-sidebar-bottom-logout" onClick={logout}>
+              <span className="item-icon"><LogOut size={14} /></span>{t("logout")}
+            </button>
+          </div>
+        </nav>
+        <div className="db-main">
+          <div className="db-topbar">
+            <button className="db-topbar-menu" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Menu"><Menu size={18} /></button>
+            <div style={{ flex: 1 }} />
+            <RoleBadge role={user?.role || "student"} />
+          </div>
+          <div className="db-content">
+            <StudentDashboard studentId={user?.email || ""} studentName={user?.full_name || ""} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Parent view ─────────────────────────────────────────────
+  if (isParent && !isCatechist) {
+    return (
+      <div className="db-layout">
+        <div className={`db-sidebar-overlay${sidebarOpen ? " open" : ""}`} onClick={() => setSidebarOpen(false)} />
+        <nav className={`db-sidebar${sidebarOpen ? " open" : ""}`}>
+          <div className="db-sidebar-top">
+            <Link href={`${base}/dashboard`} className="db-sidebar-logo" onClick={() => setSidebarOpen(false)}>
+              <span className="db-sidebar-logo-icon">📖</span>Catecismo
+            </Link>
+            <div className="db-sidebar-user">
+              <div className="db-sidebar-avatar">{(user?.full_name || user?.email || "U")[0].toUpperCase()}</div>
+              <div className="db-sidebar-user-info">
+                <div className="db-sidebar-user-name">{user?.full_name || user?.email}</div>
+                <div className="db-sidebar-user-role"><RoleBadge role="parent" /></div>
+              </div>
+            </div>
+          </div>
+          <div className="db-sidebar-nav">
+            <div className="db-sidebar-section">{t("main")}</div>
+            <Link href={isEn ? "/en" : "/"} className="db-sidebar-item">
+              <span className="item-icon"><BookOpen size={16} /></span>{isEn ? "Library" : "Biblioteca"}
+            </Link>
+          </div>
+          <div className="db-sidebar-bottom">
+            <Link href={isEn ? "/en" : "/"} className="db-sidebar-item" style={{ fontSize: 12 }}>{t("goHome")}</Link>
+            <button className="db-sidebar-bottom-logout" onClick={logout}>
+              <span className="item-icon"><LogOut size={14} /></span>{t("logout")}
+            </button>
+          </div>
+        </nav>
+        <div className="db-main">
+          <div className="db-topbar">
+            <button className="db-topbar-menu" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Menu"><Menu size={18} /></button>
+            <div style={{ flex: 1 }} />
+            <RoleBadge role="parent" />
+          </div>
+          <div className="db-content">
+            <ParentDashboard />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Admin/Catechist view ────────────────────────────────────
   return (
     <div className="db-layout">
       {/* ─── SIDEBAR OVERLAY ─── */}
@@ -167,49 +335,24 @@ export default function DashboardPage() {
             <div className="db-sidebar-avatar">{(user?.full_name || user?.email || "U")[0].toUpperCase()}</div>
             <div className="db-sidebar-user-info">
               <div className="db-sidebar-user-name">{user?.full_name || user?.email}</div>
-              <div className="db-sidebar-user-role">{t(isSuperAdmin ? "superAdmin" : isAdmin ? "admin" : "catechist")}</div>
+              <div className="db-sidebar-user-role"><RoleBadge role={user?.role || "catechist"} /></div>
             </div>
           </div>
         </div>
 
         <div className="db-sidebar-nav">
-          {/* Admin tabs */}
-          {(isAdmin || isSuperAdmin) && (
-            <>
-              <div className="db-sidebar-section">{t("main")}</div>
-              {(["overview", "analytics"] as Tab[]).map(tn => (
-                <button key={tn} className={`db-sidebar-item${tab === tn ? " active" : ""}`} onClick={() => { setTab(tn); setSidebarOpen(false); setSelectedClassId(null); }}>
-                  <span className="item-icon">{tn === "overview" ? "🏠" : "📊"}</span>{t(tn)}
-                </button>
-              ))}
-              <div className="db-sidebar-section">{t("manage")}</div>
-              {(["users", "classes", "content"] as Tab[]).map(tn => (
-                <button key={tn} className={`db-sidebar-item${tab === tn ? " active" : ""}`} onClick={() => { setTab(tn); setSidebarOpen(false); setSelectedClassId(null); }}>
-                  <span className="item-icon">{tn === "users" ? "👥" : tn === "classes" ? "🏫" : "📚"}</span>{t(tn)}
-                  {tn === "users" && users.length > 0 && <span className="db-sidebar-badge">{users.length}</span>}
-                </button>
-              ))}
-            </>
-          )}
-
-          {/* Classes tab for catechists without admin */}
-          {!isAdmin && !isSuperAdmin && (
-            <>
-              <div className="db-sidebar-section">{t("main")}</div>
-              <button className={`db-sidebar-item${tab === "classes" ? " active" : ""}`} onClick={() => { setTab("classes"); setSidebarOpen(false); setSelectedClassId(null); }}>
-                <span className="item-icon">🏫</span>{t("classes")}
-              </button>
-            </>
-          )}
+          {sidebarNavItems}
         </div>
 
         <div className="db-sidebar-bottom">
           <button className={`db-sidebar-item${tab === "settings" ? " active" : ""}`} onClick={() => { setTab("settings"); setSidebarOpen(false); setSelectedClassId(null); }}>
-            <span className="item-icon">⚙️</span>{t("settings")}
+            <span className="item-icon"><Settings size={16} /></span>{t("settings")}
           </button>
-          <Link href={isEn ? "/en" : "/"} className="db-sidebar-item" style={{ fontSize: 12 }}>{t("goHome")}</Link>
+          <Link href={isEn ? "/en" : "/"} className="db-sidebar-item" style={{ fontSize: 12 }}>
+            <span className="item-icon"><Home size={14} /></span>{t("goHome")}
+          </Link>
           <button className="db-sidebar-bottom-logout" onClick={logout}>
-            <span className="item-icon">⏻</span>{t("logout")}
+            <span className="item-icon"><LogOut size={14} /></span>{t("logout")}
           </button>
         </div>
       </nav>
@@ -217,11 +360,9 @@ export default function DashboardPage() {
       {/* ─── MAIN ─── */}
       <div className="db-main">
         <div className="db-topbar">
-          <button className="db-topbar-menu" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
+          <button className="db-topbar-menu" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Menu"><Menu size={18} /></button>
           <div style={{ flex: 1 }} />
-          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--color-secondary)" }}>
-            {t(tab)} {selectedClassId && "› Detalle"}
-          </span>
+          <RoleBadge role={user?.role || "catechist"} />
         </div>
 
         <div className="db-content">
@@ -235,13 +376,28 @@ export default function DashboardPage() {
               {/* ─── OVERVIEW ─── */}
               {tab === "overview" && (
                 <div>
-                  <h1>Dashboard</h1>
+                  <h1>{t("dashboard")}</h1>
                   <p className="db-subtitle">
-                    {isEn ? "Welcome back" : "Bienvenido de vuelta"}, {user?.full_name || user?.email}.
+                    {t("welcomeBack")}, {user?.full_name || user?.email}.
                   </p>
 
+                  {/* Permissions summary */}
+                  <div className="db-cards" style={{ marginTop: 24 }}>
+                    <div className="db-card" style={{ cursor: "default" }}>
+                      <div className="db-card-title">{t("permissions")}</div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
+                        <span style={{ fontSize: 12, color: "var(--color-secondary)" }}>✅ {t("permView")}</span>
+                        <span style={{ fontSize: 12, color: "var(--color-secondary)" }}>✅ {t("permLessons")}</span>
+                        {isCatechist && <span style={{ fontSize: 12, color: "var(--color-accent)" }}>✅ {t("permClasses")}</span>}
+                        {isAdmin && <span style={{ fontSize: 12, color: "var(--color-accent)" }}>✅ {t("permUsers")}</span>}
+                        {isAdmin && <span style={{ fontSize: 12, color: "var(--color-accent)" }}>✅ {t("permAnalytics")}</span>}
+                        {isSuperAdmin && <span style={{ fontSize: 12, color: "var(--color-amber)" }}>✅ {t("permAdmin")}</span>}
+                      </div>
+                    </div>
+                  </div>
+
                   {isLoading ? (
-                    <div className="db-stat-row" style={{ marginTop: 24 }}>
+                    <div className="db-stat-row" style={{ marginTop: 16 }}>
                       {[1, 2, 3, 4, 5, 6].map(i => (
                         <div key={i} className="db-stat-item">
                           <div className="db-skeleton db-skeleton-stat" />
@@ -251,7 +407,7 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     <>
-                      <div className="db-stat-row" style={{ marginTop: 24 }}>
+                      <div className="db-stat-row" style={{ marginTop: 16 }}>
                         <div className="db-stat-item">
                           <div className="db-stat-val">{stats.users}</div>
                           <div className="db-stat-lbl">{t("totalUsers")}</div>
@@ -276,10 +432,10 @@ export default function DashboardPage() {
 
                       {/* Quick links */}
                       <div className="db-btn-group" style={{ marginTop: 8 }}>
-                        <button className="db-btn primary" onClick={() => setTab("users")}>👥 {t("users")}</button>
-                        <button className="db-btn" onClick={() => setTab("classes")}>🏫 {t("classes")}</button>
-                        <button className="db-btn" onClick={() => setTab("analytics")}>📊 {t("analytics")}</button>
-                        <button className="db-btn" onClick={() => setTab("content")}>📚 {t("content")}</button>
+                        <button className="db-btn primary" onClick={() => setTab("users")}><Users size={14} /> {t("users")}</button>
+                        <button className="db-btn" onClick={() => setTab("classes")}><School size={14} /> {t("classes")}</button>
+                        <button className="db-btn" onClick={() => setTab("analytics")}><BarChart3 size={14} /> {t("analytics")}</button>
+                        <button className="db-btn" onClick={() => setTab("content")}><BookOpen size={14} /> {t("content")}</button>
                       </div>
                     </>
                   )}
@@ -351,7 +507,7 @@ export default function DashboardPage() {
                         <thead>
                           <tr>
                             <th>{t("name")}</th><th>{t("email")}</th><th>{t("role")}</th>
-                            <th>{t("completed")}</th><th>{t("lastActive")}</th><th></th>
+                            <th>{t("completed")}</th><th>{t("lastActive")}</th><th><span className="sr-only">{isEn ? "Actions" : "Acciones"}</span></th>
                           </tr>
                         </thead>
                         <tbody>
@@ -361,14 +517,15 @@ export default function DashboardPage() {
                               <td data-label={t("email")}>{u.email}</td>
                               <td data-label={t("role")}>
                                 {isSuperAdmin ? (
-                                  <select className="db-inline-select" value={u.role} onChange={e => handleRoleChange(u.id, e.target.value)}>
+                                  <select className="db-inline-select" value={u.role} onChange={e => handleRoleChange(u.id, e.target.value)} aria-label={t("role")}>
                                     <option value="user">{t("student")}</option>
                                     <option value="catechist">{t("catechist")}</option>
+                                    <option value="parent">{t("parent")}</option>
                                     <option value="admin">{t("admin")}</option>
                                     <option value="super_admin">{t("superAdmin")}</option>
                                   </select>
                                 ) : (
-                                  <span className="db-badge">{t(u.role === "super_admin" ? "superAdmin" : u.role === "admin" ? "admin" : u.role === "catechist" ? "catechist" : "student")}</span>
+                                  <RoleBadge role={u.role || "user"} />
                                 )}
                               </td>
                               <td data-label={t("completed")}>{u.lessons_completed || 0}</td>
@@ -426,7 +583,7 @@ export default function DashboardPage() {
   );
 }
 
-// ─── Settings sub-component ──────────────────────────────────────────────────
+// ─── Settings sub-component ──────────────────────────────────────
 
 function SettingsPanel({ isEn, user }: { isEn: boolean; user: { email?: string; full_name?: string } | null }) {
   const [stab, setStab] = useState<"profile" | "password">("profile");
@@ -484,8 +641,8 @@ function SettingsPanel({ isEn, user }: { isEn: boolean; user: { email?: string; 
 
       {stab === "profile" && (
         <div style={{ maxWidth: 400 }}>
-          <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "var(--color-secondary)", marginBottom: 6 }}>{t("displayName")}</label>
-          <input value={name} onChange={e => setName(e.target.value)}
+          <label htmlFor="settings-name" style={{ display: "block", fontSize: 12, fontWeight: 500, color: "var(--color-secondary)", marginBottom: 6 }}>{t("displayName")}</label>
+          <input id="settings-name" value={name} onChange={e => setName(e.target.value)}
             style={{ width: "100%", padding: "8px 12px", fontSize: 14, fontFamily: "var(--font-sans)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-sm)", background: "var(--color-surface)", color: "var(--color-primary)", outline: "none" }}
             placeholder={t("displayNamePlaceholder")} />
           <div style={{ marginTop: 16 }}>

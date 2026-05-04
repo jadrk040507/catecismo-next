@@ -3,6 +3,18 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import {
+  ArrowLeft,
+  KeyRound,
+  Trash2,
+  UserPlus,
+  Plus,
+  Flame,
+  BookOpen,
+  Users,
+  ClipboardList,
+  LayoutDashboard,
+} from "lucide-react";
+import {
   getClassById,
   getClassStudents,
   addStudentToClass,
@@ -243,12 +255,12 @@ export default function ClassDetail({ classId, onBack }: Props) {
   function typeBadgeClass(t: string) {
     const map: Record<string, string> = {
       lesson: "accent",
-      workbook: "info",
-      guide: "warn",
-      video: "good",
-      quiz: "bad",
+      workbook: "accent",
+      guide: "gold",
+      video: "green",
+      quiz: "red",
     };
-    return map[t] || "default";
+    return map[t] || "";
   }
 
   function typeLabel(t: string) {
@@ -270,7 +282,7 @@ export default function ClassDetail({ classId, onBack }: Props) {
         students: { es: "Estudiantes", en: "Students" },
         catechists: { es: "Catequistas", en: "Catechists" },
         assignments: { es: "Asignaciones", en: "Assignments" },
-        back: { es: "← Volver", en: "← Back" },
+        back: { es: "Volver", en: "Back" },
         className: { es: "Nombre", en: "Name" },
         description: { es: "Descripción", en: "Description" },
         inviteCode: { es: "Código de invitación", en: "Invite Code" },
@@ -292,7 +304,7 @@ export default function ClassDetail({ classId, onBack }: Props) {
         selectCatechist: { es: "Seleccionar catequista…", en: "Select catechist…" },
         add: { es: "Agregar", en: "Add" },
         noCatechists: { es: "No hay catequistas adicionales.", en: "No additional catechists." },
-        newAssignment: { es: "+ Nueva asignación", en: "+ New assignment" },
+        newAssignment: { es: "Nueva asignación", en: "New assignment" },
         createAssignment: { es: "Crear asignación", en: "Create assignment" },
         lessonLabel: { es: "Lección", en: "Lesson" },
         selectLesson: { es: "Seleccionar lección…", en: "Select lesson…" },
@@ -309,12 +321,24 @@ export default function ClassDetail({ classId, onBack }: Props) {
       }) as Record<string, { es: string; en: string }>
     )[key]?.[isEn ? "en" : "es"] || key;
 
+  // ─── Tab icon helper ──────────────────────────────────────────────────
+  const tabIcon: Record<Tab, React.ReactNode> = {
+    stream: <LayoutDashboard size={14} aria-hidden="true" />,
+    students: <Users size={14} aria-hidden="true" />,
+    catechists: <BookOpen size={14} aria-hidden="true" />,
+    assignments: <ClipboardList size={14} aria-hidden="true" />,
+  };
+
   // ─── Loading state ───────────────────────────────────────────────────
   if (loading) {
     return (
       <div>
-        <button className="db-btn ghost" onClick={onBack}>
-          {t("back")}
+        <button
+          className="db-btn ghost"
+          onClick={onBack}
+          aria-label={t("back")}
+        >
+          <ArrowLeft size={14} aria-hidden="true" /> {t("back")}
         </button>
         <div className="db-empty" style={{ marginTop: 24 }}>
           <p>{t("loading")}</p>
@@ -326,8 +350,12 @@ export default function ClassDetail({ classId, onBack }: Props) {
   if (!clase) {
     return (
       <div>
-        <button className="db-btn ghost" onClick={onBack}>
-          {t("back")}
+        <button
+          className="db-btn ghost"
+          onClick={onBack}
+          aria-label={t("back")}
+        >
+          <ArrowLeft size={14} aria-hidden="true" /> {t("back")}
         </button>
         <div className="db-empty" style={{ marginTop: 24 }}>
           <p>{isEn ? "Class not found." : "Clase no encontrada."}</p>
@@ -343,8 +371,13 @@ export default function ClassDetail({ classId, onBack }: Props) {
   return (
     <div>
       {/* ─── Back button ─── */}
-      <button className="db-btn ghost" onClick={onBack} style={{ marginBottom: 16 }}>
-        {t("back")}
+      <button
+        className="db-btn ghost"
+        onClick={onBack}
+        aria-label={t("back")}
+        style={{ marginBottom: 16 }}
+      >
+        <ArrowLeft size={14} aria-hidden="true" /> {t("back")}
       </button>
 
       {/* ─── Header ─── */}
@@ -354,68 +387,61 @@ export default function ClassDetail({ classId, onBack }: Props) {
       )}
 
       {/* ─── Tabs ─── */}
-      <div className="db-subtabs" style={{ marginTop: 20 }}>
+      <nav className="db-subtabs" role="tablist" aria-label={isEn ? "Class sections" : "Secciones de clase"}>
         {(["stream", "students", "catechists", "assignments"] as Tab[]).map((tb) => (
           <button
             key={tb}
+            role="tab"
+            aria-selected={tab === tb}
+            aria-controls={`panel-${tb}`}
             onClick={() => setTab(tb)}
             className={`db-subtab${tab === tb ? " active" : ""}`}
           >
-            {t(tb)}
+            {tabIcon[tb]} {t(tb)}
           </button>
         ))}
-      </div>
+      </nav>
 
       {/* ═══════════════════════════════════════════════════════════════
          TAB: STREAM
          ═══════════════════════════════════════════════════════════════ */}
       {tab === "stream" && (
-        <div style={{ marginTop: 24, maxWidth: 600 }}>
+        <div role="tabpanel" id="panel-stream" style={{ marginTop: 24, maxWidth: 600 }}>
           <div className="db-card" style={{ cursor: "default" }}>
-            <div style={{ marginBottom: 16 }}>
-              <span style={{ fontSize: 12, color: "var(--text-tertiary)", textTransform: "uppercase" }}>
-                {t("className")}
-              </span>
-              <div style={{ fontWeight: 600, fontSize: 18 }}>{clase.name}</div>
+            <div className="db-stat-item" style={{ border: "none", padding: 0, background: "transparent" }}>
+              <div className="db-stat-lbl">{t("className")}</div>
+              <div className="db-stat-val" style={{ fontSize: 18 }}>{clase.name}</div>
             </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <span style={{ fontSize: 12, color: "var(--text-tertiary)", textTransform: "uppercase" }}>
-                {t("description")}
-              </span>
-              <div style={{ color: "var(--text-secondary)" }}>
+            <div className="db-stat-item" style={{ border: "none", padding: 0, background: "transparent" }}>
+              <div className="db-stat-lbl">{t("description")}</div>
+              <div style={{ color: "var(--color-secondary)" }}>
                 {clase.description || t("noDescription")}
               </div>
             </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <span style={{ fontSize: 12, color: "var(--text-tertiary)", textTransform: "uppercase" }}>
-                {t("inviteCode")}
-              </span>
+            <div className="db-stat-item" style={{ border: "none", padding: 0, background: "transparent" }}>
+              <div className="db-stat-lbl">{t("inviteCode")}</div>
               <div>
                 <span className="db-badge accent" style={{ fontSize: 14, padding: "6px 14px" }}>
-                  🔑 {clase.invite_code}
+                  <KeyRound size={14} aria-hidden="true" /> {clase.invite_code}
                 </span>
               </div>
             </div>
 
             {ownerCatechist && (
-              <div style={{ marginBottom: 16 }}>
-                <span style={{ fontSize: 12, color: "var(--text-tertiary)", textTransform: "uppercase" }}>
-                  {t("catechistOwner")}
-                </span>
-                <div style={{ color: "var(--text-secondary)" }}>
+              <div className="db-stat-item" style={{ border: "none", padding: 0, background: "transparent" }}>
+                <div className="db-stat-lbl">{t("catechistOwner")}</div>
+                <div style={{ color: "var(--color-secondary)" }}>
                   {ownerCatechist.full_name} ({ownerCatechist.email})
                 </div>
               </div>
             )}
 
             {course && (
-              <div>
-                <span style={{ fontSize: 12, color: "var(--text-tertiary)", textTransform: "uppercase" }}>
-                  {t("course")}
-                </span>
-                <div style={{ color: "var(--text-secondary)" }}>{course.name}</div>
+              <div className="db-stat-item" style={{ border: "none", padding: 0, background: "transparent" }}>
+                <div className="db-stat-lbl">{t("course")}</div>
+                <div style={{ color: "var(--color-secondary)" }}>{course.name}</div>
               </div>
             )}
           </div>
@@ -426,28 +452,28 @@ export default function ClassDetail({ classId, onBack }: Props) {
          TAB: STUDENTS
          ═══════════════════════════════════════════════════════════════ */}
       {tab === "students" && (
-        <div style={{ marginTop: 24 }}>
+        <div role="tabpanel" id="panel-students" style={{ marginTop: 24 }}>
           {/* Invite form */}
           <form
+            className="db-form-row"
             onSubmit={handleInviteStudent}
-            style={{
-              display: "flex",
-              gap: 8,
-              alignItems: "center",
-              marginBottom: 20,
-              flexWrap: "wrap",
-            }}
+            aria-label={t("inviteStudent")}
           >
             <input
+              className="db-search"
               type="email"
               placeholder={t("emailPlaceholder")}
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               required
-              style={{ maxWidth: 280, marginBottom: 0 }}
+              aria-label={t("emailPlaceholder")}
             />
-            <button className="db-btn primary" disabled={inviting || !inviteEmail.trim()}>
-              {inviting ? "…" : t("invite")}
+            <button
+              className="db-btn primary"
+              disabled={inviting || !inviteEmail.trim()}
+              aria-label={t("invite")}
+            >
+              <UserPlus size={14} aria-hidden="true" /> {inviting ? "…" : t("invite")}
             </button>
           </form>
 
@@ -458,7 +484,7 @@ export default function ClassDetail({ classId, onBack }: Props) {
             </div>
           ) : (
             <div className="db-table-wrap">
-              <table className="db-table">
+              <table className="db-table" aria-label={isEn ? "Students" : "Estudiantes"}>
                 <thead>
                   <tr>
                     <th>{t("studentName")}</th>
@@ -466,24 +492,24 @@ export default function ClassDetail({ classId, onBack }: Props) {
                     <th>{t("completedLessons")}</th>
                     <th>{t("quizAvg")}</th>
                     <th>{t("streak")}</th>
-                    <th></th>
+                    <th><span className="sr-only">{t("remove")}</span></th>
                   </tr>
                 </thead>
                 <tbody>
                   {students.map((s) => (
                     <tr key={s.student_id}>
-                      <td style={{ fontWeight: 500 }}>{s.student_name || "—"}</td>
-                      <td>{s.student_email || "—"}</td>
-                      <td>{s.completed || 0}</td>
-                      <td>{s.quizAvg || 0}%</td>
-                      <td>🔥 {s.streak || 0}d</td>
-                      <td>
+                      <td data-label={t("studentName")} style={{ fontWeight: 500 }}>{s.student_name || "—"}</td>
+                      <td data-label={t("studentEmail")}>{s.student_email || "—"}</td>
+                      <td data-label={t("completedLessons")}>{s.completed || 0}</td>
+                      <td data-label={t("quizAvg")}>{s.quizAvg || 0}%</td>
+                      <td data-label={t("streak")}><Flame size={14} aria-hidden="true" style={{ color: "var(--color-papal, #C9882B)", verticalAlign: "text-bottom" }} /> {s.streak || 0}d</td>
+                      <td data-label="">
                         <button
-                          className="db-btn sm ghost"
-                          style={{ color: "var(--color-red)" }}
+                          className="db-btn sm danger ghost"
                           onClick={() => handleRemoveStudent(s.student_id)}
+                          aria-label={`${t("remove")} ${s.student_name || s.student_email}`}
                         >
-                          🗑️ {t("remove")}
+                          <Trash2 size={14} aria-hidden="true" /> {t("remove")}
                         </button>
                       </td>
                     </tr>
@@ -499,21 +525,15 @@ export default function ClassDetail({ classId, onBack }: Props) {
          TAB: CATECHISTS
          ═══════════════════════════════════════════════════════════════ */}
       {tab === "catechists" && (
-        <div style={{ marginTop: 24 }}>
+        <div role="tabpanel" id="panel-catechists" style={{ marginTop: 24 }}>
           {/* Add catechist form */}
-          <div
-            style={{
-              display: "flex",
-              gap: 8,
-              alignItems: "center",
-              marginBottom: 20,
-              flexWrap: "wrap",
-            }}
-          >
+          <div className="db-form-row" style={{ marginBottom: 20 }}>
             <select
+              className="db-inline-select"
               value={selectedCatechistId}
               onChange={(e) => setSelectedCatechistId(e.target.value)}
-              style={{ maxWidth: 280, marginBottom: 0 }}
+              aria-label={t("selectCatechist")}
+              style={{ maxWidth: 280 }}
             >
               <option value="">{t("selectCatechist")}</option>
               {availableCatechists.map((c) => (
@@ -526,20 +546,19 @@ export default function ClassDetail({ classId, onBack }: Props) {
               className="db-btn primary"
               disabled={addingCatechist || !selectedCatechistId}
               onClick={handleAddCatechist}
+              aria-label={t("add")}
             >
-              {addingCatechist ? "…" : t("add")}
+              <UserPlus size={14} aria-hidden="true" /> {addingCatechist ? "…" : t("add")}
             </button>
           </div>
 
           {/* Owner catechist card */}
           {ownerCatechist && (
             <div className="db-card" style={{ cursor: "default", marginBottom: 12 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div className="db-card-footer">
                 <div>
-                  <div style={{ fontWeight: 600 }}>{ownerCatechist.full_name}</div>
-                  <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-                    {ownerCatechist.email}
-                  </div>
+                  <div className="db-card-title">{ownerCatechist.full_name}</div>
+                  <div className="db-card-desc">{ownerCatechist.email}</div>
                 </div>
                 <span className="db-badge">{isEn ? "Owner" : "Titular"}</span>
               </div>
@@ -555,21 +574,19 @@ export default function ClassDetail({ classId, onBack }: Props) {
 
           {classCatechists.map((c) => (
             <div key={c.catechist_id} className="db-card" style={{ cursor: "default", marginBottom: 8 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div className="db-card-footer">
                 <div>
-                  <div style={{ fontWeight: 600 }}>{c.full_name || "—"}</div>
-                  <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-                    {c.email || "—"}
-                  </div>
+                  <div className="db-card-title">{c.full_name || "—"}</div>
+                  <div className="db-card-desc">{c.email || "—"}</div>
                 </div>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <div className="db-btn-group">
                   {c.role && <span className="db-badge">{c.role}</span>}
                   <button
-                    className="db-btn sm ghost"
-                    style={{ color: "var(--color-red)" }}
+                    className="db-btn sm danger ghost"
                     onClick={() => handleRemoveCatechist(c.catechist_id)}
+                    aria-label={`${t("remove")} ${c.full_name || c.email}`}
                   >
-                    🗑️ {t("remove")}
+                    <Trash2 size={14} aria-hidden="true" /> {t("remove")}
                   </button>
                 </div>
               </div>
@@ -582,14 +599,15 @@ export default function ClassDetail({ classId, onBack }: Props) {
          TAB: ASSIGNMENTS
          ═══════════════════════════════════════════════════════════════ */}
       {tab === "assignments" && (
-        <div style={{ marginTop: 24 }}>
+        <div role="tabpanel" id="panel-assignments" style={{ marginTop: 24 }}>
           {/* Add assignment button */}
           <div style={{ marginBottom: 20 }}>
             <button
               className="db-btn primary"
               onClick={() => setShowAddAssignment(true)}
+              aria-label={t("newAssignment")}
             >
-              {t("newAssignment")}
+              <Plus size={14} aria-hidden="true" /> {t("newAssignment")}
             </button>
           </div>
 
@@ -600,32 +618,32 @@ export default function ClassDetail({ classId, onBack }: Props) {
             </div>
           ) : (
             <div className="db-table-wrap">
-              <table className="db-table">
+              <table className="db-table" aria-label={isEn ? "Assignments" : "Asignaciones"}>
                 <thead>
                   <tr>
                     <th>{t("lessonTitle")}</th>
                     <th>{t("typeCol")}</th>
                     <th>{t("notesCol")}</th>
-                    <th></th>
+                    <th><span className="sr-only">{t("remove")}</span></th>
                   </tr>
                 </thead>
                 <tbody>
                   {assignments.map((a) => (
                     <tr key={a.id}>
-                      <td style={{ fontWeight: 500 }}>{a.lesson_title}</td>
-                      <td>
+                      <td data-label={t("lessonTitle")} style={{ fontWeight: 500 }}>{a.lesson_title}</td>
+                      <td data-label={t("typeCol")}>
                         <span className={`db-badge ${typeBadgeClass(a.assignment_type)}`}>
                           {typeLabel(a.assignment_type)}
                         </span>
                       </td>
-                      <td style={{ color: "var(--text-secondary)" }}>{a.notes || "—"}</td>
-                      <td>
+                      <td data-label={t("notesCol")} style={{ color: "var(--color-secondary)" }}>{a.notes || "—"}</td>
+                      <td data-label="">
                         <button
-                          className="db-btn sm ghost"
-                          style={{ color: "var(--color-red)" }}
+                          className="db-btn sm danger ghost"
                           onClick={() => handleRemoveAssignment(a.id)}
+                          aria-label={`${t("remove")} ${a.lesson_title}`}
                         >
-                          🗑️ {t("remove")}
+                          <Trash2 size={14} aria-hidden="true" /> {t("remove")}
                         </button>
                       </td>
                     </tr>
@@ -641,7 +659,13 @@ export default function ClassDetail({ classId, onBack }: Props) {
          ASSIGNMENT MODAL
          ═══════════════════════════════════════════════════════════════ */}
       {showAddAssignment && (
-        <div className="db-overlay" onClick={() => setShowAddAssignment(false)}>
+        <div
+          className="db-overlay"
+          onClick={() => setShowAddAssignment(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("createAssignment")}
+        >
           <form
             className="db-modal"
             onClick={(e) => e.stopPropagation()}
@@ -649,8 +673,9 @@ export default function ClassDetail({ classId, onBack }: Props) {
           >
             <h2>{t("createAssignment")}</h2>
 
-            <label>{t("lessonLabel")}</label>
+            <label htmlFor="assignment-lesson">{t("lessonLabel")}</label>
             <select
+              id="assignment-lesson"
               value={newAssignmentLesson}
               onChange={(e) => setNewAssignmentLesson(e.target.value)}
               required
@@ -663,8 +688,9 @@ export default function ClassDetail({ classId, onBack }: Props) {
               ))}
             </select>
 
-            <label>{t("typeLabel")}</label>
+            <label htmlFor="assignment-type">{t("typeLabel")}</label>
             <select
+              id="assignment-type"
               value={newAssignmentType}
               onChange={(e) =>
                 setNewAssignmentType(e.target.value as ClassAssignment["assignment_type"])
@@ -677,8 +703,9 @@ export default function ClassDetail({ classId, onBack }: Props) {
               <option value="quiz">{typeLabel("quiz")}</option>
             </select>
 
-            <label>{t("notesLabel")}</label>
+            <label htmlFor="assignment-notes">{t("notesLabel")}</label>
             <textarea
+              id="assignment-notes"
               value={newAssignmentNotes}
               onChange={(e) => setNewAssignmentNotes(e.target.value)}
               placeholder={t("notesPlaceholder")}
@@ -705,7 +732,11 @@ export default function ClassDetail({ classId, onBack }: Props) {
       )}
 
       {/* ─── TOAST ─── */}
-      {toast && <div className="db-toast">{toast}</div>}
+      {toast && (
+        <div className="db-toast" role="status" aria-live="polite">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }

@@ -14,6 +14,17 @@ import {
   type CreateClassInput,
   type UpdateClassInput,
 } from "@/lib/classes";
+import {
+  BookOpen,
+  Users,
+  Book,
+  Pencil,
+  Trash2,
+  KeyRound,
+  AlertTriangle,
+  Plus,
+  Search,
+} from "lucide-react";
 
 // ─── Tipos locales ───────────────────────────────────────────────────────────
 
@@ -312,23 +323,14 @@ export default function CatechistDashboard({
   // ─── Loading state ───────────────────────────────────────────────────
   if (loading) {
     return (
-      <div>
+      <div className="db-content">
         <h1>{t("myClasses")}</h1>
-        <div className="db-cards" style={{ marginTop: 20 }}>
+        <div className="db-cards db-cards--loading">
           {[1, 2, 3].map((i) => (
             <div key={i} className="db-card">
-              <div
-                className="db-skeleton"
-                style={{ height: 18, width: "70%" }}
-              />
-              <div
-                className="db-skeleton"
-                style={{ height: 14, width: "90%", marginTop: 8 }}
-              />
-              <div
-                className="db-skeleton"
-                style={{ height: 14, width: "40%", marginTop: 6 }}
-              />
+              <div className="db-skeleton db-skeleton-title" />
+              <div className="db-skeleton db-skeleton-desc" />
+              <div className="db-skeleton db-skeleton-meta" />
             </div>
           ))}
         </div>
@@ -337,44 +339,48 @@ export default function CatechistDashboard({
   }
 
   return (
-    <div>
+    <div className="db-content">
       <h1>{t("myClasses")}</h1>
       <p className="db-subtitle">{t("subtitle")}</p>
 
       {/* ─── ACTIONS BAR ─── */}
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          alignItems: "center",
-          marginTop: 20,
-          marginBottom: 16,
-          flexWrap: "wrap",
-        }}
-      >
-        <input
-          className="db-search"
-          placeholder={t("searchPlaceholder")}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ marginBottom: 0 }}
-        />
-        <button className="db-btn primary" onClick={openCreateModal}>
-          + {t("newClass")}
+      <div className="db-actions-bar">
+        <div className="db-search-wrap">
+          <Search size={14} className="db-search-icon" aria-hidden="true" />
+          <input
+            className="db-search db-search--with-icon"
+            placeholder={t("searchPlaceholder")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            aria-label={t("searchPlaceholder")}
+          />
+        </div>
+        <button
+          className="db-btn primary"
+          onClick={openCreateModal}
+          aria-label={t("newClass")}
+        >
+          <Plus size={15} aria-hidden="true" />
+          {t("newClass")}
         </button>
       </div>
 
       {/* ─── EMPTY STATE ─── */}
       {!loading && filtered.length === 0 && (
-        <div className="db-empty">
-          <span className="db-empty-icon">📚</span>
+        <div className="db-empty" role="status">
+          <span className="db-empty-icon" aria-hidden="true">
+            <BookOpen size={40} strokeWidth={1.5} />
+          </span>
           <p>{t("noClasses")}</p>
-          <p style={{ fontSize: 13, color: "var(--color-tertiary)" }}>
-            {t("noClassesHint")}
-          </p>
+          <p className="db-empty-hint">{t("noClassesHint")}</p>
           <div className="db-empty-action">
-            <button className="db-btn primary" onClick={openCreateModal}>
-              + {t("newClass")}
+            <button
+              className="db-btn primary"
+              onClick={openCreateModal}
+              aria-label={t("newClass")}
+            >
+              <Plus size={15} aria-hidden="true" />
+              {t("newClass")}
             </button>
           </div>
         </div>
@@ -388,50 +394,65 @@ export default function CatechistDashboard({
             const studentLabel =
               count === 1 ? t("student_one") : t("students");
             return (
-              <div
+              <article
                 key={cls.id}
                 className="db-card"
                 onClick={() => goToClass(cls.id)}
+                role="button"
+                tabIndex={0}
+                aria-label={`${cls.name} — ${count} ${studentLabel}`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    goToClass(cls.id);
+                  }
+                }}
               >
                 <div className="db-card-title">{cls.name}</div>
                 {cls.description && (
                   <div className="db-card-desc">{cls.description}</div>
                 )}
                 <div className="db-card-meta">
-                  <span>
-                    👥 {count} {studentLabel}
+                  <span className="db-card-meta-item">
+                    <Users size={13} aria-hidden="true" />
+                    {count} {studentLabel}
                   </span>
-                  {cls.course_name && <span>📖 {cls.course_name}</span>}
+                  {cls.course_name && (
+                    <span className="db-card-meta-item">
+                      <Book size={13} aria-hidden="true" />
+                      {cls.course_name}
+                    </span>
+                  )}
                 </div>
                 <div className="db-card-footer">
                   <span className="db-badge accent">
-                    🔑 {cls.invite_code}
+                    <KeyRound size={11} aria-hidden="true" />
+                    {cls.invite_code}
                   </span>
-                  <div style={{ display: "flex", gap: 4 }}>
+                  <div className="db-btn-group">
                     <button
                       className="db-btn sm ghost"
                       onClick={(e) => {
                         e.stopPropagation();
                         openEditModal(cls);
                       }}
-                      title={t("edit")}
+                      aria-label={t("edit")}
                     >
-                      ✏️
+                      <Pencil size={14} aria-hidden="true" />
                     </button>
                     <button
-                      className="db-btn sm ghost"
+                      className="db-btn sm ghost danger"
                       onClick={(e) => {
                         e.stopPropagation();
                         openEditModal(cls);
                       }}
-                      title={t("delete")}
-                      style={{ color: "var(--color-red)" }}
+                      aria-label={t("delete")}
                     >
-                      🗑️
+                      <Trash2 size={14} aria-hidden="true" />
                     </button>
                   </div>
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>
@@ -441,7 +462,13 @@ export default function CatechistDashboard({
          CREATE CLASS MODAL
          ═══════════════════════════════════════════════════════════════ */}
       {showCreateModal && (
-        <div className="db-overlay" onClick={() => setShowCreateModal(false)}>
+        <div
+          className="db-overlay"
+          onClick={() => setShowCreateModal(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("createTitle")}
+        >
           <form
             className="db-modal"
             onClick={(e) => e.stopPropagation()}
@@ -449,23 +476,26 @@ export default function CatechistDashboard({
           >
             <h2>{t("createTitle")}</h2>
 
-            <label>{t("nameLabel")}</label>
+            <label htmlFor="create-name">{t("nameLabel")}</label>
             <input
+              id="create-name"
               value={formName}
               onChange={(e) => setFormName(e.target.value)}
               placeholder={t("namePlaceholder")}
               required
             />
 
-            <label>{t("descLabel")}</label>
+            <label htmlFor="create-desc">{t("descLabel")}</label>
             <textarea
+              id="create-desc"
               value={formDesc}
               onChange={(e) => setFormDesc(e.target.value)}
               placeholder={t("descPlaceholder")}
             />
 
-            <label>{t("courseLabel")}</label>
+            <label htmlFor="create-course">{t("courseLabel")}</label>
             <select
+              id="create-course"
               value={formCourse}
               onChange={(e) => setFormCourse(e.target.value)}
             >
@@ -501,29 +531,41 @@ export default function CatechistDashboard({
          EDIT CLASS MODAL (with password-gated danger zone)
          ═══════════════════════════════════════════════════════════════ */}
       {showEditModal && editingClass && (
-        <div className="db-overlay" onClick={() => setShowEditModal(false)}>
-          <div className="db-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="db-overlay"
+          onClick={() => setShowEditModal(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("editTitle")}
+        >
+          <div
+            className="db-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* ─── Edit form ─── */}
             <form onSubmit={handleUpdate}>
               <h2>{t("editTitle")}</h2>
 
-              <label>{t("nameLabel")}</label>
+              <label htmlFor="edit-name">{t("nameLabel")}</label>
               <input
+                id="edit-name"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
                 placeholder={t("namePlaceholder")}
                 required
               />
 
-              <label>{t("descLabel")}</label>
+              <label htmlFor="edit-desc">{t("descLabel")}</label>
               <textarea
+                id="edit-desc"
                 value={formDesc}
                 onChange={(e) => setFormDesc(e.target.value)}
                 placeholder={t("descPlaceholder")}
               />
 
-              <label>{t("courseLabel")}</label>
+              <label htmlFor="edit-course">{t("courseLabel")}</label>
               <select
+                id="edit-course"
                 value={formCourse}
                 onChange={(e) => setFormCourse(e.target.value)}
               >
@@ -554,46 +596,35 @@ export default function CatechistDashboard({
             </form>
 
             {/* ─── Danger Zone ─── */}
-            <div
-              style={{
-                marginTop: 28,
-                paddingTop: 20,
-                borderTop: "1px solid var(--color-border-light)",
-              }}
-            >
-              <h3 style={{ color: "var(--color-red)", marginBottom: 8 }}>
-                ⚠️ {t("dangerZone")}
+            <div className="db-danger-zone">
+              <h3 className="db-danger-zone-title">
+                <AlertTriangle size={14} aria-hidden="true" />
+                {t("dangerZone")}
               </h3>
-              <p
-                style={{
-                  fontSize: 12,
-                  color: "var(--color-secondary)",
-                  marginBottom: 12,
-                }}
-              >
+              <p className="db-danger-zone-desc">
                 {t("deleteWarning")}
               </p>
 
               {deleteError && (
-                <div className="db-msg bad" style={{ marginBottom: 10 }}>
+                <div className="db-msg bad" role="alert">
                   {deleteError}
                 </div>
               )}
 
-              <label style={{ color: "var(--color-secondary)" }}>
-                {t("passwordLabel")}
-              </label>
+              <label htmlFor="delete-password">{t("passwordLabel")}</label>
               <input
+                id="delete-password"
                 type="password"
                 value={deletePassword}
                 onChange={(e) => setDeletePassword(e.target.value)}
                 placeholder="••••••••"
-                style={{ marginBottom: 10 }}
+                autoComplete="current-password"
               />
               <button
                 className="db-btn danger"
                 onClick={handleDelete}
                 disabled={deleting || !deletePassword}
+                aria-label={t("confirmDelete")}
               >
                 {deleting ? "…" : t("confirmDelete")}
               </button>
@@ -603,7 +634,11 @@ export default function CatechistDashboard({
       )}
 
       {/* ─── TOAST ─── */}
-      {toast && <div className="db-toast">{toast}</div>}
+      {toast && (
+        <div className="db-toast" role="status" aria-live="polite">
+          {toast}
+        </div>
+      )}
     </div>
   );
 }

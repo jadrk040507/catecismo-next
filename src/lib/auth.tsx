@@ -21,6 +21,8 @@ interface AuthState {
   isAdmin: boolean;
   isCatechist: boolean;
   isSuperAdmin: boolean;
+  isStudent: boolean;
+  isParent: boolean;
   role: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -34,6 +36,8 @@ const AuthContext = createContext<AuthState>({
   isAdmin: false,
   isCatechist: false,
   isSuperAdmin: false,
+  isStudent: false,
+  isParent: false,
   role: null,
   loading: true,
   login: async () => {},
@@ -47,6 +51,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCatechist, setIsCatechist] = useState(false);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [isStudent, setIsStudent] = useState(false);
+  const [isParent, setIsParent] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -54,6 +60,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAdmin(r === "admin" || r === "super_admin");
     setIsCatechist(r === "catechist" || r === "admin" || r === "super_admin");
     setIsSuperAdmin(r === "super_admin");
+    setIsStudent(r === "user" || r === "student");
+    setIsParent(r === "parent");
     setRole(r);
   }
 
@@ -79,7 +87,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         deriveRoles(r);
       } else {
         setUser(null); setIsLoggedIn(false);
-        setIsAdmin(false); setIsCatechist(false); setIsSuperAdmin(false); setRole(null);
+        setIsAdmin(false); setIsCatechist(false); setIsSuperAdmin(false);
+        setIsStudent(false); setIsParent(false); setRole(null);
       }
     });
 
@@ -111,7 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, isAdmin, isCatechist, isSuperAdmin, role, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, isAdmin, isCatechist, isSuperAdmin, isStudent, isParent, role, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
