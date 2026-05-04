@@ -16,7 +16,7 @@ function getSupabase() {
 }
 
 interface AuthState {
-  user: { email?: string; full_name?: string; role?: string } | null;
+  user: { id?: string; email?: string; full_name?: string; role?: string } | null;
   isLoggedIn: boolean;
   isAdmin: boolean;
   isCatechist: boolean;
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         const r = session.user.user_metadata?.role || "user";
-        setUser({ email: session.user.email, full_name: session.user.user_metadata?.full_name, role: r });
+        setUser({ id: session.user.id, email: session.user.email, full_name: session.user.user_metadata?.full_name, role: r });
         setIsLoggedIn(true);
         deriveRoles(r);
       }
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         const r = session.user.user_metadata?.role || "user";
-        setUser({ email: session.user.email, full_name: session.user.user_metadata?.full_name, role: r });
+        setUser({ id: session.user.id, email: session.user.email, full_name: session.user.user_metadata?.full_name, role: r });
         setIsLoggedIn(true);
         deriveRoles(r);
       } else {

@@ -49,6 +49,8 @@ export interface ClassAssignment {
   notes: string | null;
   status: "active" | "archived";
   sort_order: number | null;
+  due_date: string | null;
+  section_name: string | null;
   created_at: string;
 }
 
@@ -91,6 +93,8 @@ export interface CreateAssignmentInput {
   assignment_type?: "lesson" | "workbook" | "guide" | "video" | "quiz";
   notes?: string;
   sort_order?: number;
+  due_date?: string;
+  section_name?: string;
 }
 
 export interface UpdateAssignmentInput {
@@ -867,6 +871,157 @@ export async function removeAssignment(assignmentId: number): Promise<void> {
     .eq("id", assignmentId);
 
   if (error) throw new Error(error.message);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ANUNCIOS DE CLASE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export interface ClassAnnouncement {
+  id: string;
+  class_id: number;
+  author_id: string;
+  content: string;
+  pinned: boolean;
+  created_at: string;
+  author_name?: string;
+  author_email?: string;
+}
+
+export async function getClassAnnouncements(
+  classId: number
+): Promise<ClassAnnouncement[]> {
+  const { data: rows, error } = await supabase()
+    .from("class_announcements")
+    .select("*")
+    .eq("class_id", classId)
+    .order("pinned", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  const announcements = (rows || []) as any[];
+
+  if (announcements.length > 0) {
+    const authorIds = [...new Set(announcements.map((a) => a.author_id))];
+    const { data: profiles } = await (supabase()
+      .from("profiles") as any)
+      .select("id, full_name, email")
+      .in("id", authorIds);
+
+    const profileMap = new Map<string, any>();
+    for (const p of profiles || []) profileMap.set(p.id, p);
+
+    for (const ann of announcements) {
+      const prof = profileMap.get(ann.author_id) || {};
+      ann.author_name = prof.full_name || "";
+      ann.author_email = prof.email || "";
+    }
+  }
+
+  return announcements as ClassAnnouncement[];
+}
+
+export async function addAnnouncement(
+  classId: number,
+  content: string
+): Promise<ClassAnnouncement> {
+  const profile = await getCurrentProfile();
+  if (!profile) throw new Error("No autenticado");
+
+  const { data, error } = await (supabase()
+    .from("class_announcements") as any)
+    .insert({
+      class_id: classId,
+      author_id: profile.id,
+      content: content.trim(),
+      pinned: false,
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  return {
+    ...data,
+    author_name: profile.full_name,
+    author_email: profile.email,
+  } as ClassAnnouncement;
+}
+
+export async function deleteAnnouncement(announcementId: string): Promise<void> {
+  const { error } = await supabase()
+    .from("class_announcements")
+    .delete()
+    .eq("id", announcementId);
+
+  if (error) throw new Error(error.message);
+}
+
+export async function togglePinAnnouncement(
+  announcementId: string,
+  pinned: boolean
+): Promise<void> {
+  const { error } = await (getSupabase() as any)
+    .from("class_announcements")
+    .update({ pinned })
+    .eq("id", announcementId);
+
+  if (error) throw new Error(error.message);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GRADEBOOK
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export interface GradebookEntry {
+  student_id: string;
+  student_name: string;
+  assignment_id: number;
+  completed: boolean;
+  score: number | null;
+}
+
+export async function getGradebook(classId: number): Promise<{
+  students: ClassStudent[];
+  assignments: ClassAssignment[];
+  grades: Record<string, Record<number, { completed: boolean; score: number | null }>>;
+}> {
+  const [students, assignments] = await Promise.all([
+    getClassStudents(classId),
+    getClassAssignments(classId),
+  ]);
+
+  const grades: Record<string, Record<number, { completed: boolean; score: number | null }>> = {};
+
+  if (students.length > 0) {
+    const studentIds = students.map((s) => s.student_id);
+    const { data: progressRows } = await (supabase()
+      .from("progress") as any)
+      .select("user_id, lesson_slug, quiz_score, completed")
+      .in("user_id", studentIds);
+
+    for (const student of students) {
+      grades[student.student_id] = {};
+    }
+
+    const assignmentMap = new Map<string, number>();
+    for (const a of assignments) {
+      if (a.lesson_slug) assignmentMap.set(a.lesson_slug, a.id);
+    }
+
+    for (const p of progressRows || []) {
+      const assignmentId = assignmentMap.get(p.lesson_slug);
+      if (assignmentId && grades[p.user_id]) {
+        grades[p.user_id][assignmentId] = {
+          completed: p.completed || false,
+          score: p.quiz_score ?? null,
+        };
+      }
+    }
+  }
+
+  return { students, assignments, grades };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
