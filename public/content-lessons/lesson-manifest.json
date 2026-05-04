@@ -1,0 +1,580 @@
+{
+  "es": [
+    {
+      "slug": "01-deseo-de-dios",
+      "title": "El Deseo de Dios",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "02-revelacion-de-dios",
+      "title": "La Revelación de Dios",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "03-dios-es-padre",
+      "title": "Dios es Padre",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "04-jesucristo-dios-y-hombre",
+      "title": "Jesucristo, Dios y Hombre",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "05-la-encarnacion",
+      "title": "La Encarnación / The Incarnation",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "06-el-espiritu-santo",
+      "title": "El Espíritu Santo",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "07-la-santisima-trinidad",
+      "title": "La Santísima Trinidad",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "08-creacion-y-providencia",
+      "title": "Creación y Providencia",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "09-el-hombre-y-el-pecado",
+      "title": "El Hombre y el Pecado / Man and Sin",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "10-la-iglesia-pueblo-de-dios",
+      "title": "La Iglesia, Pueblo de Dios",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "index",
+      "title": "El Credo — Proyecto Catecismo",
+      "course": "credo",
+      "section": "credo",
+      "lang": "es"
+    },
+    {
+      "slug": "21-la-dignidad-humana",
+      "title": "La Dignidad Humana",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "22-la-bienaventuranza",
+      "title": "La Bienaventuranza",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "23-la-libertad",
+      "title": "La Libertad del Hombre",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "24-la-conciencia",
+      "title": "La Conciencia Moral",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "25-las-virtudes",
+      "title": "Las Virtudes",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "26-el-pecado",
+      "title": "El Pecado",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "27-la-justicia",
+      "title": "La Justicia",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "28-el-respeto",
+      "title": "El Respeto a la Vida Humana",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "29-la-verdad",
+      "title": "La Verdad y la Veracidad",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "30-la-sexualidad",
+      "title": "La Sexualidad Humana",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "31-el-trabajo",
+      "title": "El Trabajo Humano",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "32-la-comunidad",
+      "title": "La Comunidad: Vivir la Fe en Común",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "index",
+      "title": "La Vida en Cristo — Proyecto Catecismo",
+      "course": "moral",
+      "section": "moral",
+      "lang": "es"
+    },
+    {
+      "slug": "33-la-oracion-cristiana",
+      "title": "La Oración Cristiana",
+      "course": "oracion",
+      "section": "oracion",
+      "lang": "es"
+    },
+    {
+      "slug": "34-fuentes-de-la-oracion",
+      "title": "Las Fuentes de la Oración",
+      "course": "oracion",
+      "section": "oracion",
+      "lang": "es"
+    },
+    {
+      "slug": "35-tradicion-contemplativa",
+      "title": "La Tradición Contemplativa",
+      "course": "oracion",
+      "section": "oracion",
+      "lang": "es"
+    },
+    {
+      "slug": "36-el-padre-nuestro",
+      "title": "El Padre Nuestro",
+      "course": "oracion",
+      "section": "oracion",
+      "lang": "es"
+    },
+    {
+      "slug": "37-las-siete-peticiones",
+      "title": "Las Siete Peticiones",
+      "course": "oracion",
+      "section": "oracion",
+      "lang": "es"
+    },
+    {
+      "slug": "index",
+      "title": "La Oración Cristiana — Proyecto Catecismo",
+      "course": "oracion",
+      "section": "oracion",
+      "lang": "es"
+    },
+    {
+      "slug": "11-la-liturgia",
+      "title": "La Liturgia",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "12-el-misterio-pascual",
+      "title": "El Misterio Pascual",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "13-el-bautismo",
+      "title": "El Bautismo",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "14-la-confirmacion",
+      "title": "La Confirmación: El Don de la Fortaleza",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "15-la-eucaristia",
+      "title": "La Eucaristía",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "16-la-reconciliacion",
+      "title": "La Reconciliación",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "17-la-uncion",
+      "title": "La Unción de los Enfermos",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "18-el-orden",
+      "title": "El Orden Sagrado",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "19-el-matrimonio",
+      "title": "El Matrimonio",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "20-la-comunion",
+      "title": "Los Sacramentales y Las Exequias",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    },
+    {
+      "slug": "index",
+      "title": "Liturgia y Sacramentos — Proyecto Catecismo",
+      "course": "sacramentos",
+      "section": "sacramentos",
+      "lang": "es"
+    }
+  ],
+  "en": [
+    {
+      "slug": "01-desire-for-god",
+      "title": "The Desire for God",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "02-divine-revelation",
+      "title": "Divine Revelation",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "03-god-is-father",
+      "title": "God is Father",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "04-jesus-christ-god-and-man",
+      "title": "Jesus Christ, God and Man",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "05-the-incarnation",
+      "title": "The Incarnation",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "06-the-holy-spirit",
+      "title": "The Holy Spirit",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "07-the-holy-trinity",
+      "title": "The Holy Trinity",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "08-creation-and-providence",
+      "title": "Creation and Providence",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "09-man-and-sin",
+      "title": "Man and Sin",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "10-the-church-people-of-god",
+      "title": "The Church, People of God",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "index",
+      "title": "The Creed — Catechism Project",
+      "course": "credo",
+      "section": "credo",
+      "lang": "en"
+    },
+    {
+      "slug": "21-human-dignity",
+      "title": "The Dignity of the Human Person",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "22-the-beatitudes",
+      "title": "The Beatitudes: The Path to True Happiness",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "23-freedom",
+      "title": "Human Freedom",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "24-conscience",
+      "title": "Moral Conscience",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "25-virtues",
+      "title": "The Virtues",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "26-sin",
+      "title": "Sin",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "27-justice",
+      "title": "Justice",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "28-respect",
+      "title": "Respect for Human Life",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "29-truth",
+      "title": "Truth: Living in the Light",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "30-sexuality",
+      "title": "Human Sexuality",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "31-work",
+      "title": "Human Work",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "32-community",
+      "title": "Community: Living the Faith Together",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "index",
+      "title": "Life in Christ — Catechism Project",
+      "course": "moral",
+      "section": "moral",
+      "lang": "en"
+    },
+    {
+      "slug": "33-christian-prayer",
+      "title": "Christian Prayer",
+      "course": "prayer",
+      "section": "prayer",
+      "lang": "en"
+    },
+    {
+      "slug": "34-sources-of-prayer",
+      "title": "The Sources of Prayer",
+      "course": "prayer",
+      "section": "prayer",
+      "lang": "en"
+    },
+    {
+      "slug": "35-the-contemplative-tradition",
+      "title": "The Contemplative Tradition",
+      "course": "prayer",
+      "section": "prayer",
+      "lang": "en"
+    },
+    {
+      "slug": "36-our-father",
+      "title": "The Our Father",
+      "course": "prayer",
+      "section": "prayer",
+      "lang": "en"
+    },
+    {
+      "slug": "37-seven-petitions",
+      "title": "The Seven Petitions",
+      "course": "prayer",
+      "section": "prayer",
+      "lang": "en"
+    },
+    {
+      "slug": "index",
+      "title": "Christian Prayer — Catechism Project",
+      "course": "prayer",
+      "section": "prayer",
+      "lang": "en"
+    },
+    {
+      "slug": "11-the-liturgy",
+      "title": "The Liturgy",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "12-the-paschal-mystery",
+      "title": "The Paschal Mystery",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "13-baptism",
+      "title": "Baptism",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "14-confirmation",
+      "title": "Confirmation: The Gift of Fortitude",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "15-the-eucharist",
+      "title": "The Eucharist",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "16-reconciliation",
+      "title": "Reconciliation",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "17-anointing",
+      "title": "The Anointing of the Sick",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "18-holy-orders",
+      "title": "Holy Orders",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "19-matrimony",
+      "title": "Matrimony",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "20-sacramentals",
+      "title": "Sacramentals and Funerals",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    },
+    {
+      "slug": "index",
+      "title": "Liturgy and Sacraments — Catechism Project",
+      "course": "sacraments",
+      "section": "sacraments",
+      "lang": "en"
+    }
+  ]
+}

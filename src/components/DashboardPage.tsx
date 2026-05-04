@@ -1,174 +1,509 @@
 "use client";
 
 import { useAuth } from "@/lib/auth";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabase } from "@/lib/supabase";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import {
+  useUsers,
+  useStats,
+  useLessonStats,
+  usePromoteUser,
+  useRealtimeUsers,
+} from "@/hooks/useData";
+import CatechistDashboard from "@/components/CatechistDashboard";
+import ClassDetail from "@/components/ClassDetail";
+
+type Tab = "overview" | "users" | "classes" | "content" | "analytics" | "settings";
 
 export default function DashboardPage() {
-  const { isLoggedIn, isAdmin, user, loading: authLoading } = useAuth();
+  const { isLoggedIn, isAdmin, isCatechist, isSuperAdmin, user, loading: authLoading, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const isEn = pathname.startsWith("/en");
+  const base = isEn ? "/en" : "";
 
-  const [stats, setStats] = useState({ users: 0, completed: 0, active: 0, avgQuiz: 0 });
-  const [users, setUsers] = useState<any[]>([]);
-  const [lessons, setLessons] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<Tab>("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
 
-  const t = isEn ? {
-    title: "Dashboard", denied: "Access denied. Admin only.", loginPrompt: "Please log in.", loginLink: "Login",
-    homeLink: "Home", statsUsers: "Users", statsCompleted: "Completed", statsActive: "Active Today",
-    statsAvgQuiz: "Avg Quiz", usersTitle: "Users", search: "Search…", colName: "Name", colEmail: "Email",
-    colRole: "Role", colCompleted: "Completed", colLastActive: "Last Active", promote: "Promote to Admin",
-    noUsers: "No users.", lessonsTitle: "Lesson Stats", colLesson: "Lesson", colCompletions: "Completions",
-    colAvgQuizScore: "Avg Quiz", colAvgTime: "Avg Time", noLessons: "No data.", loading: "Loading…",
-    promoteSuccess: "Promoted!", promoteError: "Error.", homeButton: "Back to Home",
-  } : {
-    title: "Dashboard", denied: "Acceso denegado. Solo administradores.", loginPrompt: "Inicia sesión.", loginLink: "Iniciar sesión",
-    homeLink: "Volver al inicio", statsUsers: "Usuarios", statsCompleted: "Completadas", statsActive: "Activos Hoy",
-    statsAvgQuiz: "Promedio Quiz", usersTitle: "Usuarios", search: "Buscar…", colName: "Nombre", colEmail: "Email",
-    colRole: "Rol", colCompleted: "Completadas", colLastActive: "Última", promote: "Promover a Admin",
-    noUsers: "Sin usuarios.", lessonsTitle: "Estadísticas", colLesson: "Lección", colCompletions: "Completadas",
-    colAvgQuizScore: "Quiz Prom.", colAvgTime: "Tiempo", noLessons: "Sin datos.", loading: "Cargando…",
-    promoteSuccess: "¡Promovido!", promoteError: "Error.", homeButton: "Volver al Inicio",
-  };
+  // Data hooks
+  const { users, loading: usersLoading, refetch: refetchUsers } = useUsers();
+  const { stats, loading: statsLoading, refetch: refetchStats } = useStats();
+  const lessons = useLessonStats();
 
+  const handleChange = useCallback(() => {
+    refetchUsers();
+    refetchStats();
+  }, [refetchUsers, refetchStats]);
+
+  const { promote, pending: promotePending } = usePromoteUser(handleChange);
+  useRealtimeUsers(handleChange);
+
+  const isLoading = statsLoading || usersLoading;
+
+  // Redirect if not catechist
   useEffect(() => {
-    if (!authLoading && !isAdmin) {
-      if (!isLoggedIn) router.push(isEn ? "/en/login" : "/login");
-      setLoading(false);
-      return;
+    if (!authLoading && !isCatechist) {
+      if (!isLoggedIn) router.push(`${base}/login`);
+      else router.push("/");
     }
-    if (!authLoading && isAdmin) loadData();
-  }, [authLoading, isAdmin]);
+  }, [authLoading, isCatechist, isLoggedIn, router, base]);
 
-  async function loadData() {
+  // Promote handler
+  async function handlePromote(userId: string) {
     try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-      );
-      const { data: profiles } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
-      if (profiles) {
-        setUsers(profiles);
-        const today = new Date().toISOString().split("T")[0];
-        const active = profiles.filter((p: any) => p.last_active?.startsWith(today)).length;
-        setStats({
-          users: profiles.length,
-          completed: profiles.reduce((sum: number, p: any) => sum + (p.lessons_completed || 0), 0),
-          active,
-          avgQuiz: 0,
-        });
-      }
-
-      const { data: lessonData } = await supabase.from("lesson_stats").select("*").order("completions", { ascending: false });
-      if (lessonData) setLessons(lessonData);
-    } catch {} finally { setLoading(false); }
+      await promote(userId);
+      showMessage(isEn ? "Promoted!" : "¡Promovido!");
+    } catch {
+      showMessage(isEn ? "Error." : "Error.", true);
+    }
   }
 
-  async function promoteUser(userId: string) {
+  // Role change (super_admin only)
+  async function handleRoleChange(userId: string, newRole: string) {
     try {
-      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || "", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "");
-      await supabase.from("profiles").update({ role: "admin" }).eq("id", userId);
-      setMessage(t.promoteSuccess);
-      setTimeout(() => setMessage(""), 3000);
-      loadData();
-    } catch { setMessage(t.promoteError); }
+      await (getSupabase().from("profiles") as any).update({ role: newRole }).eq("id", userId);
+      refetchUsers();
+      refetchStats();
+      showMessage(isEn ? "Role updated" : "Rol actualizado");
+    } catch {
+      showMessage(isEn ? "Error" : "Error", true);
+    }
   }
 
-  if (!isAdmin) {
+  // Delete user (super_admin only)
+  async function handleDeleteUser(userId: string) {
+    if (!confirm(isEn ? "Delete this user permanently?" : "¿Eliminar este usuario permanentemente?")) return;
+    try {
+      const s = getSupabase();
+      await Promise.all([
+        (s.from("class_students") as any).delete().eq("student_id", userId),
+        (s.from("class_catechists") as any).delete().eq("catechist_id", userId),
+        (s.from("progress") as any).delete().eq("user_id", userId),
+        (s.from("parent_child_links") as any).delete().or(`parent_id.eq.${userId},child_id.eq.${userId}`),
+      ]);
+      await (s.from("profiles") as any).delete().eq("id", userId);
+      refetchUsers();
+      refetchStats();
+      showMessage(isEn ? "User deleted" : "Usuario eliminado");
+    } catch {
+      showMessage(isEn ? "Error deleting" : "Error al eliminar", true);
+    }
+  }
+
+  function showMessage(text: string, isError = false) {
+    setMessage(text);
+    setTimeout(() => setMessage(""), 3000);
+  }
+
+  const filteredUsers = useMemo(
+    () => users.filter(u => (u.full_name + u.email).toLowerCase().includes(search.toLowerCase())),
+    [users, search]
+  );
+
+  const t = (key: string) =>
+    (({
+      overview: { es: "Vista general", en: "Overview" },
+      users: { es: "Usuarios", en: "Users" },
+      classes: { es: "Clases", en: "Classes" },
+      content: { es: "Contenido", en: "Content" },
+      analytics: { es: "Analíticas", en: "Analytics" },
+      settings: { es: "Ajustes", en: "Settings" },
+      logout: { es: "Cerrar sesión", en: "Log out" },
+      main: { es: "Principal", en: "Main" },
+      manage: { es: "Gestión", en: "Manage" },
+      totalUsers: { es: "Usuarios", en: "Users" },
+      catechists: { es: "Catequistas", en: "Catechists" },
+      activeToday: { es: "Activos hoy", en: "Active today" },
+      completedLessons: { es: "Lecciones completadas", en: "Completed lessons" },
+      avgStreak: { es: "Racha prom.", en: "Avg streak" },
+      classesCount: { es: "Clases", en: "Classes" },
+      studentsEnrolled: { es: "Alumnos", en: "Students" },
+      lessonsAssigned: { es: "Lecciones asignadas", en: "Lessons assigned" },
+      search: { es: "Buscar…", en: "Search…" },
+      name: { es: "Nombre", en: "Name" },
+      email: { es: "Email", en: "Email" },
+      role: { es: "Rol", en: "Role" },
+      completed: { es: "Completadas", en: "Completed" },
+      lastActive: { es: "Última actividad", en: "Last active" },
+      promote: { es: "Promover", en: "Promote" },
+      delete: { es: "Eliminar", en: "Delete" },
+      noUsers: { es: "Sin usuarios.", en: "No users." },
+      loading: { es: "Cargando…", en: "Loading…" },
+      noAccess: { es: "Acceso denegado.", en: "Access denied." },
+      goHome: { es: "← Volver al sitio", en: "← Back to site" },
+      superAdmin: { es: "Super Admin", en: "Super Admin" },
+      admin: { es: "Admin", en: "Admin" },
+      catechist: { es: "Catequista", en: "Catechist" },
+      student: { es: "Estudiante", en: "Student" },
+    }) as Record<string, { es: string; en: string }>)[key]?.[isEn ? "en" : "es"] || key;
+
+  if (authLoading) {
     return (
-      <div className="max-w-md mx-auto px-4 py-24 text-center">
-        <h1 className="font-serif text-2xl font-bold text-ink mb-4">{t.title}</h1>
-        <p className="text-ink-soft mb-4">{t.denied}</p>
-        <Link href={isEn ? "/en/login" : "/login"} className="text-clay hover:text-gold-dark font-medium">{t.loginLink}</Link>
+      <div className="db-layout">
+        <div className="db-main"><div className="db-content"><div className="db-empty"><span className="db-empty-icon">⏳</span><p>{t("loading")}</p></div></div></div>
       </div>
     );
   }
 
+  if (!isCatechist) return null;
+
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
-      <h1 className="font-serif text-2xl sm:text-3xl font-bold text-ink mb-6">{t.title}</h1>
+    <div className="db-layout">
+      {/* ─── SIDEBAR OVERLAY ─── */}
+      <div className={`db-sidebar-overlay${sidebarOpen ? " open" : ""}`} onClick={() => setSidebarOpen(false)} />
 
-      {message && <div className="mb-4 p-3 rounded-lg bg-sage/10 border border-sage/20 text-sage text-sm">{message}</div>}
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8">
-        {[
-          { v: stats.users, l: t.statsUsers },
-          { v: stats.completed, l: t.statsCompleted },
-          { v: stats.active, l: t.statsActive },
-          { v: stats.avgQuiz + "%", l: t.statsAvgQuiz },
-        ].map((s, i) => (
-          <div key={i} className="card-parchment p-4 text-center">
-            <div className="font-serif text-2xl font-bold text-gold-dark">{s.v}</div>
-            <div className="text-xs text-ink-soft mt-1">{s.l}</div>
+      {/* ─── SIDEBAR ─── */}
+      <nav className={`db-sidebar${sidebarOpen ? " open" : ""}`}>
+        <div className="db-sidebar-top">
+          <Link href={`${base}/dashboard`} className="db-sidebar-logo" onClick={() => { setTab("overview"); setSidebarOpen(false); setSelectedClassId(null); }}>
+            <span className="db-sidebar-logo-icon">📖</span>Catecismo
+          </Link>
+          <div className="db-sidebar-user">
+            <div className="db-sidebar-avatar">{(user?.full_name || user?.email || "U")[0].toUpperCase()}</div>
+            <div className="db-sidebar-user-info">
+              <div className="db-sidebar-user-name">{user?.full_name || user?.email}</div>
+              <div className="db-sidebar-user-role">{t(isSuperAdmin ? "superAdmin" : isAdmin ? "admin" : "catechist")}</div>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Users */}
-      <div className="card-parchment p-4 sm:p-6 mb-6">
-        <h2 className="font-serif text-lg font-semibold text-ink mb-4">{t.usersTitle}</h2>
-        <input placeholder={t.search} value={search} onChange={e => setSearch(e.target.value)}
-          className="w-full max-w-sm mb-4 px-4 py-2 rounded-lg border border-parchment-deeper bg-cream text-sm focus:outline-none focus:border-gold" />
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead><tr className="text-left text-xs text-ink-soft uppercase tracking-wider border-b border-parchment-deeper">
-              <th className="pb-2 pr-3">{t.colName}</th><th className="pb-2 pr-3">{t.colEmail}</th><th className="pb-2 pr-3">{t.colRole}</th><th className="pb-2 pr-3">{t.colCompleted}</th><th className="pb-2 pr-3">{t.colLastActive}</th><th className="pb-2"></th>
-            </tr></thead>
-            <tbody>
-              {users.filter(u => (u.full_name + u.email).toLowerCase().includes(search.toLowerCase())).map(u => (
-                <tr key={u.id} className="border-b border-parchment-deeper/50">
-                  <td className="py-2.5 pr-3 font-medium">{u.full_name || "—"}</td>
-                  <td className="py-2.5 pr-3 text-ink-soft text-xs">{u.email}</td>
-                  <td className="py-2.5 pr-3"><span className="px-2 py-0.5 rounded text-xs font-medium bg-gold-light/30 text-gold-dark">{u.role || "user"}</span></td>
-                  <td className="py-2.5 pr-3">{u.lessons_completed || 0}</td>
-                  <td className="py-2.5 pr-3 text-xs text-ink-soft">{u.last_active?.split("T")[0] || "—"}</td>
-                  <td className="py-2.5">
-                    {u.role !== "admin" && u.role !== "super_admin" && (
-                      <button onClick={() => promoteUser(u.id)} className="text-xs px-3 py-1 rounded-lg bg-gold-light/30 text-gold-dark hover:bg-gold/20 transition-colors">{t.promote}</button>
-                    )}
-                  </td>
-                </tr>
+        <div className="db-sidebar-nav">
+          {/* Admin tabs */}
+          {(isAdmin || isSuperAdmin) && (
+            <>
+              <div className="db-sidebar-section">{t("main")}</div>
+              {(["overview", "analytics"] as Tab[]).map(tn => (
+                <button key={tn} className={`db-sidebar-item${tab === tn ? " active" : ""}`} onClick={() => { setTab(tn); setSidebarOpen(false); setSelectedClassId(null); }}>
+                  <span className="item-icon">{tn === "overview" ? "🏠" : "📊"}</span>{t(tn)}
+                </button>
               ))}
-              {users.length === 0 && <tr><td colSpan={6} className="py-6 text-center text-ink-soft text-sm">{t.noUsers}</td></tr>}
-            </tbody>
-          </table>
+              <div className="db-sidebar-section">{t("manage")}</div>
+              {(["users", "classes", "content"] as Tab[]).map(tn => (
+                <button key={tn} className={`db-sidebar-item${tab === tn ? " active" : ""}`} onClick={() => { setTab(tn); setSidebarOpen(false); setSelectedClassId(null); }}>
+                  <span className="item-icon">{tn === "users" ? "👥" : tn === "classes" ? "🏫" : "📚"}</span>{t(tn)}
+                  {tn === "users" && users.length > 0 && <span className="db-sidebar-badge">{users.length}</span>}
+                </button>
+              ))}
+            </>
+          )}
+
+          {/* Classes tab for catechists without admin */}
+          {!isAdmin && !isSuperAdmin && (
+            <>
+              <div className="db-sidebar-section">{t("main")}</div>
+              <button className={`db-sidebar-item${tab === "classes" ? " active" : ""}`} onClick={() => { setTab("classes"); setSidebarOpen(false); setSelectedClassId(null); }}>
+                <span className="item-icon">🏫</span>{t("classes")}
+              </button>
+            </>
+          )}
+        </div>
+
+        <div className="db-sidebar-bottom">
+          <button className={`db-sidebar-item${tab === "settings" ? " active" : ""}`} onClick={() => { setTab("settings"); setSidebarOpen(false); setSelectedClassId(null); }}>
+            <span className="item-icon">⚙️</span>{t("settings")}
+          </button>
+          <Link href={isEn ? "/en" : "/"} className="db-sidebar-item" style={{ fontSize: 12 }}>{t("goHome")}</Link>
+          <button className="db-sidebar-bottom-logout" onClick={logout}>
+            <span className="item-icon">⏻</span>{t("logout")}
+          </button>
+        </div>
+      </nav>
+
+      {/* ─── MAIN ─── */}
+      <div className="db-main">
+        <div className="db-topbar">
+          <button className="db-topbar-menu" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
+          <div style={{ flex: 1 }} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--color-secondary)" }}>
+            {t(tab)} {selectedClassId && "› Detalle"}
+          </span>
+        </div>
+
+        <div className="db-content">
+          {message && <div className={`db-msg ${message.toLowerCase().includes("error") ? "bad" : "good"}`}>{message}</div>}
+
+          {/* ─── CLASS DETAIL (overrides tab) ─── */}
+          {selectedClassId ? (
+            <ClassDetail classId={selectedClassId} onBack={() => setSelectedClassId(null)} />
+          ) : (
+            <>
+              {/* ─── OVERVIEW ─── */}
+              {tab === "overview" && (
+                <div>
+                  <h1>Dashboard</h1>
+                  <p className="db-subtitle">
+                    {isEn ? "Welcome back" : "Bienvenido de vuelta"}, {user?.full_name || user?.email}.
+                  </p>
+
+                  {isLoading ? (
+                    <div className="db-stat-row" style={{ marginTop: 24 }}>
+                      {[1, 2, 3, 4, 5, 6].map(i => (
+                        <div key={i} className="db-stat-item">
+                          <div className="db-skeleton db-skeleton-stat" />
+                          <div className="db-skeleton db-skeleton-stat-sm" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="db-stat-row" style={{ marginTop: 24 }}>
+                        <div className="db-stat-item">
+                          <div className="db-stat-val">{stats.users}</div>
+                          <div className="db-stat-lbl">{t("totalUsers")}</div>
+                        </div>
+                        <div className="db-stat-item">
+                          <div className="db-stat-val">{stats.catechists}</div>
+                          <div className="db-stat-lbl">{t("catechists")}</div>
+                        </div>
+                        <div className="db-stat-item">
+                          <div className="db-stat-val">{stats.active}</div>
+                          <div className="db-stat-lbl">{t("activeToday")}</div>
+                        </div>
+                        <div className="db-stat-item">
+                          <div className="db-stat-val">{stats.completed}</div>
+                          <div className="db-stat-lbl">{t("completedLessons")}</div>
+                        </div>
+                        <div className="db-stat-item">
+                          <div className="db-stat-val">{stats.streakAvg}d</div>
+                          <div className="db-stat-lbl">{t("avgStreak")}</div>
+                        </div>
+                      </div>
+
+                      {/* Quick links */}
+                      <div className="db-btn-group" style={{ marginTop: 8 }}>
+                        <button className="db-btn primary" onClick={() => setTab("users")}>👥 {t("users")}</button>
+                        <button className="db-btn" onClick={() => setTab("classes")}>🏫 {t("classes")}</button>
+                        <button className="db-btn" onClick={() => setTab("analytics")}>📊 {t("analytics")}</button>
+                        <button className="db-btn" onClick={() => setTab("content")}>📚 {t("content")}</button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* ─── ANALYTICS ─── */}
+              {tab === "analytics" && (
+                <div>
+                  <h1>{t("analytics")}</h1>
+                  <p className="db-subtitle">{isEn ? "Key metrics at a glance." : "Métricas clave de un vistazo."}</p>
+                  {isLoading ? (
+                    <div className="db-stat-row" style={{ marginTop: 24 }}>
+                      {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="db-stat-item"><div className="db-skeleton db-skeleton-stat" /><div className="db-skeleton db-skeleton-stat-sm" /></div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="db-stat-row" style={{ marginTop: 24 }}>
+                      <div className="db-stat-item"><div className="db-stat-val">{stats.users}</div><div className="db-stat-lbl">{t("totalUsers")}</div></div>
+                      <div className="db-stat-item"><div className="db-stat-val">{stats.catechists}</div><div className="db-stat-lbl">{t("catechists")}</div></div>
+                      <div className="db-stat-item"><div className="db-stat-val">{stats.streakAvg}d</div><div className="db-stat-lbl">{t("avgStreak")}</div></div>
+                      <div className="db-stat-item"><div className="db-stat-val">{stats.completed}</div><div className="db-stat-lbl">{t("completedLessons")}</div></div>
+                    </div>
+                  )}
+
+                  {lessons.length > 0 && (
+                    <>
+                      <h2>{t("classesCount")}</h2>
+                      <div className="db-table-wrap">
+                        <table className="db-table">
+                          <thead><tr><th>{isEn ? "Lesson" : "Lección"}</th><th>{isEn ? "Completions" : "Completadas"}</th><th>{isEn ? "Avg Quiz" : "Quiz Prom."}</th><th>{isEn ? "Avg Time" : "Tiempo Prom."}</th></tr></thead>
+                          <tbody>
+                            {lessons.slice(0, 15).map((l, i) => (
+                              <tr key={l.id || i}>
+                                <td data-label={isEn ? "Lesson" : "Lección"} style={{ fontWeight: 500 }}>{l.title || l.lesson_name || "—"}</td>
+                                <td data-label={isEn ? "Completions" : "Completadas"}>{l.completions || 0}</td>
+                                <td data-label={isEn ? "Avg Quiz" : "Quiz Prom."}>{l.avg_quiz_score ? `${l.avg_quiz_score}%` : "—"}</td>
+                                <td data-label={isEn ? "Avg Time" : "Tiempo Prom."}>{l.avg_time || "—"}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* ─── USERS ─── */}
+              {tab === "users" && (
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                    <div>
+                      <h1>{t("users")}</h1>
+                      <p className="db-subtitle">{users.length} {isEn ? "registered" : "registrados"}</p>
+                    </div>
+                  </div>
+
+                  <input className="db-search" placeholder={t("search")} value={search} onChange={e => setSearch(e.target.value)} style={{ marginTop: 16 }} />
+
+                  {usersLoading ? (
+                    <div className="db-empty"><span className="db-empty-icon">⏳</span><p>{t("loading")}</p></div>
+                  ) : filteredUsers.length === 0 ? (
+                    <div className="db-empty"><span className="db-empty-icon">👥</span><p>{t("noUsers")}</p></div>
+                  ) : (
+                    <div className="db-table-wrap">
+                      <table className="db-table">
+                        <thead>
+                          <tr>
+                            <th>{t("name")}</th><th>{t("email")}</th><th>{t("role")}</th>
+                            <th>{t("completed")}</th><th>{t("lastActive")}</th><th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredUsers.map(u => (
+                            <tr key={u.id}>
+                              <td data-label={t("name")} style={{ fontWeight: 500 }}>{u.full_name || "—"}</td>
+                              <td data-label={t("email")}>{u.email}</td>
+                              <td data-label={t("role")}>
+                                {isSuperAdmin ? (
+                                  <select className="db-inline-select" value={u.role} onChange={e => handleRoleChange(u.id, e.target.value)}>
+                                    <option value="user">{t("student")}</option>
+                                    <option value="catechist">{t("catechist")}</option>
+                                    <option value="admin">{t("admin")}</option>
+                                    <option value="super_admin">{t("superAdmin")}</option>
+                                  </select>
+                                ) : (
+                                  <span className="db-badge">{t(u.role === "super_admin" ? "superAdmin" : u.role === "admin" ? "admin" : u.role === "catechist" ? "catechist" : "student")}</span>
+                                )}
+                              </td>
+                              <td data-label={t("completed")}>{u.lessons_completed || 0}</td>
+                              <td data-label={t("lastActive")}>{u.last_active?.split("T")[0] || "—"}</td>
+                              <td data-label="">
+                                <div className="db-btn-group" style={{ justifyContent: "flex-end" }}>
+                                  {isAdmin && !["admin", "super_admin"].includes(u.role) && (
+                                    <button className="db-btn sm primary" onClick={() => handlePromote(u.id)} disabled={promotePending}>
+                                      {t("promote")}
+                                    </button>
+                                  )}
+                                  {isSuperAdmin && (
+                                    <button className="db-btn sm danger" onClick={() => handleDeleteUser(u.id)}>
+                                      {t("delete")}
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── CLASSES ─── */}
+              {tab === "classes" && (
+                <CatechistDashboard
+                  catechistId={user?.email || "unknown"}
+                  catechistName={user?.full_name || "User"}
+                />
+              )}
+
+              {/* ─── CONTENT ─── */}
+              {tab === "content" && (
+                <div>
+                  <h1>{t("content")}</h1>
+                  <p className="db-subtitle">{isEn ? "Manage lessons, workbooks, and guides." : "Gestiona lecciones, workbooks y guías."}</p>
+                  <div className="db-empty" style={{ marginTop: 32 }}>
+                    <span className="db-empty-icon">📚</span>
+                    <p>{isEn ? "Content management coming soon." : "Gestión de contenido próximamente."}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* ─── SETTINGS ─── */}
+              {tab === "settings" && <SettingsPanel isEn={isEn} user={user} />}
+            </>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Lessons */}
-      <div className="card-parchment p-4 sm:p-6">
-        <h2 className="font-serif text-lg font-semibold text-ink mb-4">{t.lessonsTitle}</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead><tr className="text-left text-xs text-ink-soft uppercase tracking-wider border-b border-parchment-deeper">
-              <th className="pb-2 pr-3">{t.colLesson}</th><th className="pb-2 pr-3">{t.colCompletions}</th><th className="pb-2 pr-3">{t.colAvgQuizScore}</th><th className="pb-2">{t.colAvgTime}</th>
-            </tr></thead>
-            <tbody>
-              {lessons.slice(0, 10).map(l => (
-                <tr key={l.id || l.title} className="border-b border-parchment-deeper/50">
-                  <td className="py-2.5 pr-3 font-medium">{l.title || l.lesson_name || "—"}</td>
-                  <td className="py-2.5 pr-3">{l.completions || 0}</td>
-                  <td className="py-2.5 pr-3">{l.avg_quiz_score || "—"}</td>
-                  <td className="py-2.5 text-xs text-ink-soft">{l.avg_time || "—"}</td>
-                </tr>
-              ))}
-              {lessons.length === 0 && <tr><td colSpan={4} className="py-6 text-center text-ink-soft text-sm">{t.noLessons}</td></tr>}
-            </tbody>
-          </table>
+// ─── Settings sub-component ──────────────────────────────────────────────────
+
+function SettingsPanel({ isEn, user }: { isEn: boolean; user: { email?: string; full_name?: string } | null }) {
+  const [stab, setStab] = useState<"profile" | "password">("profile");
+  const [name, setName] = useState(user?.full_name || "");
+  const [pw, setPw] = useState("");
+  const [msg, setMsg] = useState("");
+  const [saving, setSaving] = useState(false);
+  const supabase = getSupabase();
+
+  const t = (k: string) => (({
+    settings: { es: "Ajustes", en: "Settings" },
+    profile: { es: "Perfil", en: "Profile" },
+    password: { es: "Contraseña", en: "Password" },
+    displayName: { es: "Nombre", en: "Display name" },
+    displayNamePlaceholder: { es: "Tu nombre", en: "Your name" },
+    newPassword: { es: "Nueva contraseña", en: "New password" },
+    save: { es: "Guardar", en: "Save" },
+    updatePw: { es: "Actualizar contraseña", en: "Update password" },
+    saved: { es: "Guardado", en: "Saved" },
+    pwUpdated: { es: "Contraseña actualizada", en: "Password updated" },
+  }) as any)[k]?.[isEn ? "en" : "es"] || k;
+
+  async function saveProfile() {
+    setSaving(true);
+    try {
+      const { data: { user: u } } = await supabase.auth.getUser();
+      if (u && name) {
+        await (supabase.from("profiles") as any).update({ full_name: name }).eq("id", u.id);
+        await supabase.auth.updateUser({ data: { full_name: name } });
+      }
+      setMsg(t("saved"));
+    } catch (e: any) { setMsg(e.message); }
+    finally { setSaving(false); }
+  }
+
+  async function changePassword() {
+    setSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: pw });
+      if (error) throw error;
+      setMsg(t("pwUpdated")); setPw("");
+    } catch (e: any) { setMsg(e.message); }
+    finally { setSaving(false); }
+  }
+
+  return (
+    <div>
+      <h1>{t("settings")}</h1>
+      <div className="db-subtabs" style={{ marginTop: 20 }}>
+        <button onClick={() => setStab("profile")} className={`db-subtab${stab === "profile" ? " active" : ""}`}>{t("profile")}</button>
+        <button onClick={() => setStab("password")} className={`db-subtab${stab === "password" ? " active" : ""}`}>{t("password")}</button>
+      </div>
+
+      {msg && <div className="db-msg good">{msg}</div>}
+
+      {stab === "profile" && (
+        <div style={{ maxWidth: 400 }}>
+          <label style={{ display: "block", fontSize: 12, fontWeight: 500, color: "var(--color-secondary)", marginBottom: 6 }}>{t("displayName")}</label>
+          <input value={name} onChange={e => setName(e.target.value)}
+            style={{ width: "100%", padding: "8px 12px", fontSize: 14, fontFamily: "var(--font-sans)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-sm)", background: "var(--color-surface)", color: "var(--color-primary)", outline: "none" }}
+            placeholder={t("displayNamePlaceholder")} />
+          <div style={{ marginTop: 16 }}>
+            <button className="db-btn primary" onClick={saveProfile} disabled={saving}>{saving ? "…" : t("save")}</button>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="mt-8 text-center">
-        <Link href={isEn ? "/en" : "/"} className="text-sm text-ink-soft hover:text-ink transition-colors">← {t.homeButton}</Link>
-      </div>
+      {stab === "password" && (
+        <div style={{ maxWidth: 400 }}>
+          <input type="password" value={pw} onChange={e => setPw(e.target.value)}
+            style={{ width: "100%", padding: "8px 12px", fontSize: 14, fontFamily: "var(--font-sans)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-sm)", background: "var(--color-surface)", color: "var(--color-primary)", outline: "none", marginTop: 0 }}
+            placeholder="••••••••" />
+          <div style={{ marginTop: 16 }}>
+            <button className="db-btn primary" onClick={changePassword} disabled={saving || pw.length < 6}>{saving ? "…" : t("updatePw")}</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

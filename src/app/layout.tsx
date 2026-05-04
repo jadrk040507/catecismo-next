@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/lib/auth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MagisteriumChat from "@/components/MagisteriumChat";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,11 +30,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className="font-sans min-h-screen flex flex-col bg-parchment text-ink">
+      <body className="font-sans min-h-screen flex flex-col bg-neutral text-primary">
         <AuthProvider>
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <MagisteriumChat />
         </AuthProvider>
       </body>
     </html>

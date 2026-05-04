@@ -19,6 +19,9 @@ interface AuthState {
   user: { email?: string; full_name?: string; role?: string } | null;
   isLoggedIn: boolean;
   isAdmin: boolean;
+  isCatechist: boolean;
+  isSuperAdmin: boolean;
+  role: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, full_name: string) => Promise<void>;
@@ -29,6 +32,9 @@ const AuthContext = createContext<AuthState>({
   user: null,
   isLoggedIn: false,
   isAdmin: false,
+  isCatechist: false,
+  isSuperAdmin: false,
+  role: null,
   loading: true,
   login: async () => {},
   register: async () => {},
@@ -39,43 +45,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthState["user"]>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isCatechist, setIsCatechist] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  function deriveRoles(r: string) {
+    setIsAdmin(r === "admin" || r === "super_admin");
+    setIsCatechist(r === "catechist" || r === "admin" || r === "super_admin");
+    setIsSuperAdmin(r === "super_admin");
+    setRole(r);
+  }
 
   useEffect(() => {
     const supabase = getSupabase();
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
+    if (!supabase) { setLoading(false); return; }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        const profile = {
-          email: session.user.email,
-          full_name: session.user.user_metadata?.full_name,
-          role: session.user.user_metadata?.role || "user",
-        };
-        setUser(profile);
+        const r = session.user.user_metadata?.role || "user";
+        setUser({ email: session.user.email, full_name: session.user.user_metadata?.full_name, role: r });
         setIsLoggedIn(true);
-        setIsAdmin(profile.role === "admin" || profile.role === "super_admin");
+        deriveRoles(r);
       }
       setLoading(false);
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        const profile = {
-          email: session.user.email,
-          full_name: session.user.user_metadata?.full_name,
-          role: session.user.user_metadata?.role || "user",
-        };
-        setUser(profile);
+        const r = session.user.user_metadata?.role || "user";
+        setUser({ email: session.user.email, full_name: session.user.user_metadata?.full_name, role: r });
         setIsLoggedIn(true);
-        setIsAdmin(profile.role === "admin" || profile.role === "super_admin");
+        deriveRoles(r);
       } else {
-        setUser(null);
-        setIsLoggedIn(false);
-        setIsAdmin(false);
+        setUser(null); setIsLoggedIn(false);
+        setIsAdmin(false); setIsCatechist(false); setIsSuperAdmin(false); setRole(null);
       }
     });
 
@@ -107,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, isAdmin, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, isAdmin, isCatechist, isSuperAdmin, role, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

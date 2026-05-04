@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
-import { Menu, X, Sun, Moon, User, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -13,27 +13,18 @@ const NAV_ITEMS = [
   { href: "/es/sacramentos", label: { es: "Sacramentos", en: "Sacraments" } },
   { href: "/es/moral", label: { es: "Moral", en: "Moral" } },
   { href: "/es/oracion", label: { es: "Oración", en: "Prayer" } },
-  { href: "/es/chat-demo", label: { es: "Catequista", en: "AI Catechist" } },
 ];
 
 export default function Header() {
   const pathname = usePathname();
-  const { user, isLoggedIn, isAdmin, logout } = useAuth();
+  const { user, isLoggedIn, isCatechist, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dark, setDark] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isEn = pathname.startsWith("/en");
   const lang = isEn ? "en" : "es";
-
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "dark") {
-      setDark(true);
-      document.documentElement.classList.add("dark");
-    }
-  }, []);
+  const isDashboard = pathname.includes("/dashboard");
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -44,15 +35,6 @@ export default function Header() {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
-
-  function toggleTheme() {
-    setDark((prev) => {
-      const next = !prev;
-      localStorage.setItem("theme", next ? "dark" : "light");
-      document.documentElement.classList.toggle("dark", next);
-      return next;
-    });
-  }
 
   function toggleHref() {
     if (pathname === "/") return "/en";
@@ -65,33 +47,39 @@ export default function Header() {
   const initial = user?.full_name?.charAt(0)?.toUpperCase() || "?";
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-parchment/85 border-b border-parchment-deeper/60 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex items-center justify-between h-16">
+    <header className="site-header" style={{
+      position: "sticky", top: 0, zIndex: 50,
+      background: "rgba(255,255,255,0.82)",
+      backdropFilter: "blur(12px)",
+      WebkitBackdropFilter: "blur(12px)",
+      borderBottom: "1px solid var(--color-border-light)",
+    }}>
+      <div style={{ maxWidth: 960, margin: "0 auto", padding: "0 24px" }}>
+        <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 52 }}>
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <span className="text-2xl text-gold-dark font-serif font-bold select-none group-hover:text-gold transition-colors">
-              ✝
-            </span>
-            <span className="font-serif text-lg font-semibold text-ink tracking-tight hidden sm:block">
-              {isEn ? "Catechism Project" : "Proyecto Catecismo"}
-            </span>
+          <Link href={isEn ? "/en" : "/"} style={{ fontSize: 16, fontWeight: 600, color: "var(--color-primary)", textDecoration: "none", letterSpacing: "-0.01em" }}>
+            Catecismo
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
+          <div style={{ display: "flex", alignItems: "center", gap: 4 }} className="hidden md:flex">
             {NAV_ITEMS.map((item) => {
-              const active = pathname === item.href || pathname.startsWith(item.href + "/");
+              const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href + "/"));
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={cn(
-                    "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                    active
-                      ? "bg-gold-light/30 text-gold-dark font-semibold"
-                      : "text-ink-soft hover:text-ink hover:bg-parchment-dark/50"
-                  )}
+                  style={{
+                    padding: "6px 12px",
+                    fontSize: 13,
+                    fontWeight: active ? 500 : 400,
+                    color: active ? "var(--color-accent)" : "var(--color-secondary)",
+                    textDecoration: "none",
+                    borderRadius: 5,
+                    transition: "color 0.15s, background 0.15s",
+                  }}
+                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = "var(--color-primary)"; }}
+                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = "var(--color-secondary)"; }}
                 >
                   {item.label[lang as keyof typeof item.label]}
                 </Link>
@@ -99,68 +87,69 @@ export default function Header() {
             })}
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2">
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-ink-soft hover:text-ink hover:bg-parchment-dark/50 transition-colors"
-              aria-label={dark ? "Light mode" : "Dark mode"}
-            >
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            {/* Language toggle */}
-            <Link
-              href={toggleHref()}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wider uppercase text-ink-soft hover:text-ink hover:bg-parchment-dark/50 transition-colors border border-transparent hover:border-parchment-deeper"
-            >
-              {isEn ? "ES" : "EN"}
-            </Link>
+          {/* Right side */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {/* Language Switcher */}
+            <div className="lang-switcher">
+              <Link href={toggleHref()} className={isEn ? "" : "active"}>{lang === "en" ? "ES" : "ES"}</Link>
+              <Link href={toggleHref()} className={isEn ? "active" : ""}>{lang === "en" ? "EN" : "EN"}</Link>
+            </div>
 
             {/* Auth */}
             {isLoggedIn ? (
-              <div ref={dropdownRef} className="relative">
+              <div ref={dropdownRef} style={{ position: "relative" }}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-parchment-dark/50 transition-colors"
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "4px 8px", borderRadius: 8, border: "none",
+                    background: "transparent", cursor: "pointer",
+                  }}
                 >
-                  <span className="w-7 h-7 rounded-full bg-gold-light flex items-center justify-center text-xs font-bold text-gold-dark">
+                  <div className="avatar avatar-sm" style={{ background: "var(--color-accent)" }}>
                     {initial}
-                  </span>
-                  <span className="hidden sm:block text-sm text-ink font-medium max-w-[100px] truncate">
+                  </div>
+                  <span className="hidden sm:block" style={{ fontSize: 13, fontWeight: 500, color: "var(--color-primary)", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {user?.full_name || user?.email}
                   </span>
                 </button>
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-52 bg-cream border border-parchment-deeper rounded-xl shadow-elevated py-1.5 z-50">
-                    {isAdmin && (
-                      <>
-                        <Link
-                          href="/dashboard"
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink hover:bg-gold-light/20 transition-colors"
-                          onClick={() => setDropdownOpen(false)}
-                        >
-                          <LayoutDashboard size={16} />
-                          {isEn ? "Dashboard" : "Dashboard"}
-                        </Link>
-                        <hr className="mx-3 my-1 border-parchment-deeper" />
-                      </>
+                  <div style={{
+                    position: "absolute", right: 0, marginTop: 8, width: 200,
+                    background: "var(--color-surface)", border: "1px solid var(--color-border-light)",
+                    borderRadius: 8, boxShadow: "0 8px 30px rgba(0,0,0,0.12)", padding: "4px 0",
+                    zIndex: 100,
+                  }}>
+                    {isCatechist && (
+                      <Link
+                        href={isEn ? "/en/dashboard" : "/dashboard"}
+                        onClick={() => setDropdownOpen(false)}
+                        style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-primary)", textDecoration: "none" }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "var(--color-hover)"}
+                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                      >
+                        <LayoutDashboard size={15} />
+                        Dashboard
+                      </Link>
                     )}
                     <Link
                       href={isEn ? "/en/perfil" : "/es/perfil"}
-                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink hover:bg-gold-light/20 transition-colors"
                       onClick={() => setDropdownOpen(false)}
+                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-primary)", textDecoration: "none" }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "var(--color-hover)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
-                      <User size={16} />
+                      <User size={15} />
                       {isEn ? "My Progress" : "Mi Progreso"}
                     </Link>
-                    <hr className="mx-3 my-1 border-parchment-deeper" />
+                    <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "4px 0" }} />
                     <button
                       onClick={() => { logout(); setDropdownOpen(false); }}
-                      className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-rose hover:bg-rose/5 transition-colors"
+                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-red)", background: "transparent", border: "none", cursor: "pointer", width: "100%", textAlign: "left" }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = "var(--color-red-soft)"}
+                      onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
-                      <LogOut size={16} />
+                      <LogOut size={15} />
                       {isEn ? "Log out" : "Cerrar sesión"}
                     </button>
                   </div>
@@ -169,16 +158,17 @@ export default function Header() {
             ) : (
               <Link
                 href={isEn ? "/en/login" : "/login"}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-gold text-white hover:bg-gold-dark transition-colors shadow-gold"
+                className="btn btn-secondary btn-sm"
               >
                 {isEn ? "Login" : "Ingresar"}
               </Link>
             )}
 
-            {/* Mobile menu button */}
+            {/* Mobile menu */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 rounded-lg text-ink-soft hover:text-ink hover:bg-parchment-dark/50 transition-colors"
+              className="md:hidden"
+              style={{ padding: 8, border: "none", background: "transparent", cursor: "pointer", color: "var(--color-secondary)" }}
               aria-label="Toggle menu"
             >
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -188,19 +178,20 @@ export default function Header() {
 
         {/* Mobile Nav */}
         {mobileOpen && (
-          <div className="md:hidden pb-4 pt-2 border-t border-parchment-deeper/60 animate-fade-up">
-            {NAV_ITEMS.map((item, i) => {
+          <div style={{ paddingBottom: 16, paddingTop: 8, borderTop: "1px solid var(--color-border-light)" }}>
+            {NAV_ITEMS.map((item) => {
               const active = pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "block px-4 py-3 rounded-lg text-sm font-medium transition-colors stagger-1",
-                    active ? "bg-gold-light/30 text-gold-dark" : "text-ink-soft hover:bg-parchment-dark/30"
-                  )}
-                  style={{ animationDelay: `${i * 0.05}s` }}
+                  style={{
+                    display: "block", padding: "12px 16px", fontSize: 14,
+                    fontWeight: active ? 500 : 400,
+                    color: active ? "var(--color-accent)" : "var(--color-secondary)",
+                    textDecoration: "none", borderRadius: 5,
+                  }}
                 >
                   {item.label[lang as keyof typeof item.label]}
                 </Link>

@@ -1,0 +1,2222 @@
+[
+  {
+    "slug": "01-desire-for-god",
+    "base_slug": "01-desire-for-god",
+    "title": "The Desire for God",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 1,
+    "path": "/en/credo/01-desire-for-god"
+  },
+  {
+    "slug": "01-desire-for-god-workbook",
+    "base_slug": "01-desire-for-god",
+    "title": "Workbook — The Desire for God",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 1,
+    "path": null
+  },
+  {
+    "slug": "01-desire-for-god-guide",
+    "base_slug": "01-desire-for-god",
+    "title": "Catechist's Guide — The Desire for God",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 1,
+    "path": null
+  },
+  {
+    "slug": "02-divine-revelation",
+    "base_slug": "02-divine-revelation",
+    "title": "Divine Revelation",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 2,
+    "path": "/en/credo/02-divine-revelation"
+  },
+  {
+    "slug": "02-divine-revelation-workbook",
+    "base_slug": "02-divine-revelation",
+    "title": "Workbook — Divine Revelation",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 2,
+    "path": null
+  },
+  {
+    "slug": "02-divine-revelation-guide",
+    "base_slug": "02-divine-revelation",
+    "title": "Catechist Guide — Divine Revelation",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 2,
+    "path": null
+  },
+  {
+    "slug": "03-god-is-father",
+    "base_slug": "03-god-is-father",
+    "title": "God is Father",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 3,
+    "path": "/en/credo/03-god-is-father"
+  },
+  {
+    "slug": "03-god-is-father-workbook",
+    "base_slug": "03-god-is-father",
+    "title": "Workbook — God is Father",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 3,
+    "path": null
+  },
+  {
+    "slug": "03-god-is-father-guide",
+    "base_slug": "03-god-is-father",
+    "title": "Catechist's Guide — God is Father",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 3,
+    "path": null
+  },
+  {
+    "slug": "04-jesus-christ-god-and-man",
+    "base_slug": "04-jesus-christ-god-and-man",
+    "title": "Jesus Christ, God and Man",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 4,
+    "path": "/en/credo/04-jesus-christ-god-and-man"
+  },
+  {
+    "slug": "04-jesus-christ-god-and-man-workbook",
+    "base_slug": "04-jesus-christ-god-and-man",
+    "title": "Workbook — Jesus Christ, God and Man",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 4,
+    "path": null
+  },
+  {
+    "slug": "04-jesus-christ-god-and-man-guide",
+    "base_slug": "04-jesus-christ-god-and-man",
+    "title": "Catechist Guide — Jesus Christ, God and Man",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 4,
+    "path": null
+  },
+  {
+    "slug": "05-the-incarnation",
+    "base_slug": "05-the-incarnation",
+    "title": "The Incarnation",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 5,
+    "path": "/en/credo/05-the-incarnation"
+  },
+  {
+    "slug": "05-the-incarnation-workbook",
+    "base_slug": "05-the-incarnation",
+    "title": "Workbook — The Incarnation",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 5,
+    "path": null
+  },
+  {
+    "slug": "05-the-incarnation-guide",
+    "base_slug": "05-the-incarnation",
+    "title": "Catechist's Guide — The Incarnation",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 5,
+    "path": null
+  },
+  {
+    "slug": "06-the-holy-spirit",
+    "base_slug": "06-the-holy-spirit",
+    "title": "The Holy Spirit",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 6,
+    "path": "/en/credo/06-the-holy-spirit"
+  },
+  {
+    "slug": "06-the-holy-spirit-workbook",
+    "base_slug": "06-the-holy-spirit",
+    "title": "Workbook — The Holy Spirit",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 6,
+    "path": null
+  },
+  {
+    "slug": "06-the-holy-spirit-guide",
+    "base_slug": "06-the-holy-spirit",
+    "title": "Catechist's Guide — The Holy Spirit",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 6,
+    "path": null
+  },
+  {
+    "slug": "07-the-holy-trinity",
+    "base_slug": "07-the-holy-trinity",
+    "title": "The Holy Trinity",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 7,
+    "path": "/en/credo/07-the-holy-trinity"
+  },
+  {
+    "slug": "07-the-holy-trinity-workbook",
+    "base_slug": "07-the-holy-trinity",
+    "title": "Workbook — The Holy Trinity",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 7,
+    "path": null
+  },
+  {
+    "slug": "07-the-holy-trinity-guide",
+    "base_slug": "07-the-holy-trinity",
+    "title": "Catechist's Guide — The Holy Trinity",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 7,
+    "path": null
+  },
+  {
+    "slug": "08-creation-and-providence",
+    "base_slug": "08-creation-and-providence",
+    "title": "Creation and Providence",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 8,
+    "path": "/en/credo/08-creation-and-providence"
+  },
+  {
+    "slug": "08-creation-and-providence-workbook",
+    "base_slug": "08-creation-and-providence",
+    "title": "Workbook — Creation and Providence",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 8,
+    "path": null
+  },
+  {
+    "slug": "08-creation-and-providence-guide",
+    "base_slug": "08-creation-and-providence",
+    "title": "Catechist's Guide — Creation and Providence",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 8,
+    "path": null
+  },
+  {
+    "slug": "09-man-and-sin",
+    "base_slug": "09-man-and-sin",
+    "title": "Man and Sin",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 9,
+    "path": "/en/credo/09-man-and-sin"
+  },
+  {
+    "slug": "09-man-and-sin-workbook",
+    "base_slug": "09-man-and-sin",
+    "title": "Workbook — Man and Sin",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 9,
+    "path": null
+  },
+  {
+    "slug": "09-man-and-sin-guide",
+    "base_slug": "09-man-and-sin",
+    "title": "Catechist's Guide — Man and Sin",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 9,
+    "path": null
+  },
+  {
+    "slug": "10-the-church-people-of-god",
+    "base_slug": "10-the-church-people-of-god",
+    "title": "The Church, People of God",
+    "section": "credo",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 10,
+    "path": "/en/credo/10-the-church-people-of-god"
+  },
+  {
+    "slug": "10-the-church-people-of-god-workbook",
+    "base_slug": "10-the-church-people-of-god",
+    "title": "Workbook — The Church, People of God",
+    "section": "credo",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 10,
+    "path": null
+  },
+  {
+    "slug": "10-the-church-people-of-god-guide",
+    "base_slug": "10-the-church-people-of-god",
+    "title": "Catechist's Guide — The Church, People of God",
+    "section": "credo",
+    "lang": "en",
+    "kind": "guide",
+    "num": 10,
+    "path": null
+  },
+  {
+    "slug": "21-human-dignity",
+    "base_slug": "21-human-dignity",
+    "title": "The Dignity of the Human Person",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 21,
+    "path": "/en/moral/21-human-dignity"
+  },
+  {
+    "slug": "21-human-dignity-workbook",
+    "base_slug": "21-human-dignity",
+    "title": "Workbook — The Dignity of the Human Person",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 21,
+    "path": null
+  },
+  {
+    "slug": "21-human-dignity-guide",
+    "base_slug": "21-human-dignity",
+    "title": "Catechist's Guide — The Dignity of the Human Person",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 21,
+    "path": null
+  },
+  {
+    "slug": "22-the-beatitudes",
+    "base_slug": "22-the-beatitudes",
+    "title": "The Beatitudes: The Path to True Happiness",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 22,
+    "path": "/en/moral/22-the-beatitudes"
+  },
+  {
+    "slug": "22-the-beatitudes-workbook",
+    "base_slug": "22-the-beatitudes",
+    "title": "Workbook — The Beatitudes: The Path to True Happiness",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 22,
+    "path": null
+  },
+  {
+    "slug": "22-the-beatitudes-guide",
+    "base_slug": "22-the-beatitudes",
+    "title": "Catechist's Guide — The Beatitudes: The Path to True Happiness",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 22,
+    "path": null
+  },
+  {
+    "slug": "23-freedom",
+    "base_slug": "23-freedom",
+    "title": "Human Freedom",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 23,
+    "path": "/en/moral/23-freedom"
+  },
+  {
+    "slug": "23-freedom-workbook",
+    "base_slug": "23-freedom",
+    "title": "Workbook — Human Freedom",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 23,
+    "path": null
+  },
+  {
+    "slug": "23-freedom-guide",
+    "base_slug": "23-freedom",
+    "title": "Catechist's Guide — Human Freedom",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 23,
+    "path": null
+  },
+  {
+    "slug": "24-conscience",
+    "base_slug": "24-conscience",
+    "title": "Moral Conscience",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 24,
+    "path": "/en/moral/24-conscience"
+  },
+  {
+    "slug": "24-conscience-workbook",
+    "base_slug": "24-conscience",
+    "title": "Workbook — Moral Conscience",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 24,
+    "path": null
+  },
+  {
+    "slug": "24-conscience-guide",
+    "base_slug": "24-conscience",
+    "title": "Catechist’s Guide — Moral Conscience",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 24,
+    "path": null
+  },
+  {
+    "slug": "25-virtues",
+    "base_slug": "25-virtues",
+    "title": "The Virtues",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 25,
+    "path": "/en/moral/25-virtues"
+  },
+  {
+    "slug": "25-virtues-workbook",
+    "base_slug": "25-virtues",
+    "title": "Workbook — The Virtues",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 25,
+    "path": null
+  },
+  {
+    "slug": "25-virtues-guide",
+    "base_slug": "25-virtues",
+    "title": "Catechist's Guide — The Virtues",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 25,
+    "path": null
+  },
+  {
+    "slug": "26-sin",
+    "base_slug": "26-sin",
+    "title": "Sin",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 26,
+    "path": "/en/moral/26-sin"
+  },
+  {
+    "slug": "26-sin-workbook",
+    "base_slug": "26-sin",
+    "title": "Workbook — Sin",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 26,
+    "path": null
+  },
+  {
+    "slug": "26-sin-guide",
+    "base_slug": "26-sin",
+    "title": "Catechist Guide — Sin",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 26,
+    "path": null
+  },
+  {
+    "slug": "27-justice",
+    "base_slug": "27-justice",
+    "title": "Justice",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 27,
+    "path": "/en/moral/27-justice"
+  },
+  {
+    "slug": "27-justice-workbook",
+    "base_slug": "27-justice",
+    "title": "Workbook — Justice",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 27,
+    "path": null
+  },
+  {
+    "slug": "27-justice-guide",
+    "base_slug": "27-justice",
+    "title": "Catechist's Guide — Justice",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 27,
+    "path": null
+  },
+  {
+    "slug": "28-respect",
+    "base_slug": "28-respect",
+    "title": "Respect for Human Life",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 28,
+    "path": "/en/moral/28-respect"
+  },
+  {
+    "slug": "28-respect-workbook",
+    "base_slug": "28-respect",
+    "title": "Workbook — Respect for Human Life",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 28,
+    "path": null
+  },
+  {
+    "slug": "28-respect-guide",
+    "base_slug": "28-respect",
+    "title": "Catechist Guide — Respect for Human Life",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 28,
+    "path": null
+  },
+  {
+    "slug": "29-truth",
+    "base_slug": "29-truth",
+    "title": "Truth: Living in the Light",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 29,
+    "path": "/en/moral/29-truth"
+  },
+  {
+    "slug": "29-truth-workbook",
+    "base_slug": "29-truth",
+    "title": "Workbook — Living in the Truth",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 29,
+    "path": null
+  },
+  {
+    "slug": "29-truth-guide",
+    "base_slug": "29-truth",
+    "title": "Catechist Guide — Living in the Truth",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 29,
+    "path": null
+  },
+  {
+    "slug": "30-sexuality",
+    "base_slug": "30-sexuality",
+    "title": "Human Sexuality",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 30,
+    "path": "/en/moral/30-sexuality"
+  },
+  {
+    "slug": "30-sexuality-workbook",
+    "base_slug": "30-sexuality",
+    "title": "Workbook — Human Sexuality",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 30,
+    "path": null
+  },
+  {
+    "slug": "30-sexuality-guide",
+    "base_slug": "30-sexuality",
+    "title": "Catechist's Guide — Human Sexuality",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 30,
+    "path": null
+  },
+  {
+    "slug": "31-work",
+    "base_slug": "31-work",
+    "title": "Human Work",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 31,
+    "path": "/en/moral/31-work"
+  },
+  {
+    "slug": "31-work-workbook",
+    "base_slug": "31-work",
+    "title": "Workbook — Human Work",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 31,
+    "path": null
+  },
+  {
+    "slug": "31-work-guide",
+    "base_slug": "31-work",
+    "title": "Catechist Guide — Human Work",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 31,
+    "path": null
+  },
+  {
+    "slug": "32-community",
+    "base_slug": "32-community",
+    "title": "Community: Living the Faith Together",
+    "section": "moral",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 32,
+    "path": "/en/moral/32-community"
+  },
+  {
+    "slug": "32-community-workbook",
+    "base_slug": "32-community",
+    "title": "Workbook — Community: Living the Faith Together",
+    "section": "moral",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 32,
+    "path": null
+  },
+  {
+    "slug": "32-community-guide",
+    "base_slug": "32-community",
+    "title": "Catechist Guide — Community: Living the Faith Together",
+    "section": "moral",
+    "lang": "en",
+    "kind": "guide",
+    "num": 32,
+    "path": null
+  },
+  {
+    "slug": "33-christian-prayer",
+    "base_slug": "33-christian-prayer",
+    "title": "Christian Prayer",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 33,
+    "path": "/en/prayer/33-christian-prayer"
+  },
+  {
+    "slug": "33-christian-prayer-workbook",
+    "base_slug": "33-christian-prayer",
+    "title": "Workbook — Christian Prayer",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 33,
+    "path": null
+  },
+  {
+    "slug": "33-christian-prayer-guide",
+    "base_slug": "33-christian-prayer",
+    "title": "Catechist's Guide — Christian Prayer",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "guide",
+    "num": 33,
+    "path": null
+  },
+  {
+    "slug": "34-sources-of-prayer",
+    "base_slug": "34-sources-of-prayer",
+    "title": "The Sources of Prayer",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 34,
+    "path": "/en/prayer/34-sources-of-prayer"
+  },
+  {
+    "slug": "34-sources-of-prayer-workbook",
+    "base_slug": "34-sources-of-prayer",
+    "title": "Workbook — The Sources of Prayer",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 34,
+    "path": null
+  },
+  {
+    "slug": "34-sources-of-prayer-guide",
+    "base_slug": "34-sources-of-prayer",
+    "title": "Catechist's Guide — The Sources of Prayer",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "guide",
+    "num": 34,
+    "path": null
+  },
+  {
+    "slug": "35-the-contemplative-tradition",
+    "base_slug": "35-the-contemplative-tradition",
+    "title": "The Contemplative Tradition",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 35,
+    "path": "/en/prayer/35-the-contemplative-tradition"
+  },
+  {
+    "slug": "35-the-contemplative-tradition-workbook",
+    "base_slug": "35-the-contemplative-tradition",
+    "title": "Workbook — The Contemplative Tradition",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 35,
+    "path": null
+  },
+  {
+    "slug": "35-the-contemplative-tradition-guide",
+    "base_slug": "35-the-contemplative-tradition",
+    "title": "Catechist Guide — The Contemplative Tradition",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "guide",
+    "num": 35,
+    "path": null
+  },
+  {
+    "slug": "36-our-father",
+    "base_slug": "36-our-father",
+    "title": "The Our Father",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 36,
+    "path": "/en/prayer/36-our-father"
+  },
+  {
+    "slug": "36-our-father-workbook",
+    "base_slug": "36-our-father",
+    "title": "Workbook — The Our Father",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 36,
+    "path": null
+  },
+  {
+    "slug": "36-our-father-guide",
+    "base_slug": "36-our-father",
+    "title": "Catechist Guide — The Our Father",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "guide",
+    "num": 36,
+    "path": null
+  },
+  {
+    "slug": "37-seven-petitions",
+    "base_slug": "37-seven-petitions",
+    "title": "The Seven Petitions",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 37,
+    "path": "/en/prayer/37-seven-petitions"
+  },
+  {
+    "slug": "37-seven-petitions-workbook",
+    "base_slug": "37-seven-petitions",
+    "title": "Workbook — The Seven Petitions",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 37,
+    "path": null
+  },
+  {
+    "slug": "37-seven-petitions-guide",
+    "base_slug": "37-seven-petitions",
+    "title": "Catechist's Guide — The Seven Petitions",
+    "section": "prayer",
+    "lang": "en",
+    "kind": "guide",
+    "num": 37,
+    "path": null
+  },
+  {
+    "slug": "11-the-liturgy",
+    "base_slug": "11-the-liturgy",
+    "title": "The Liturgy",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 11,
+    "path": "/en/sacraments/11-the-liturgy"
+  },
+  {
+    "slug": "11-the-liturgy-workbook",
+    "base_slug": "11-the-liturgy",
+    "title": "Workbook — The Liturgy",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 11,
+    "path": null
+  },
+  {
+    "slug": "11-the-liturgy-guide",
+    "base_slug": "11-the-liturgy",
+    "title": "Catechist's Guide — The Liturgy",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 11,
+    "path": null
+  },
+  {
+    "slug": "12-the-paschal-mystery",
+    "base_slug": "12-the-paschal-mystery",
+    "title": "The Paschal Mystery",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 12,
+    "path": "/en/sacraments/12-the-paschal-mystery"
+  },
+  {
+    "slug": "12-the-paschal-mystery-workbook",
+    "base_slug": "12-the-paschal-mystery",
+    "title": "Workbook — The Paschal Mystery",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 12,
+    "path": null
+  },
+  {
+    "slug": "12-the-paschal-mystery-guide",
+    "base_slug": "12-the-paschal-mystery",
+    "title": "Catechist's Guide — The Paschal Mystery",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 12,
+    "path": null
+  },
+  {
+    "slug": "13-baptism",
+    "base_slug": "13-baptism",
+    "title": "Baptism",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 13,
+    "path": "/en/sacraments/13-baptism"
+  },
+  {
+    "slug": "13-baptism-workbook",
+    "base_slug": "13-baptism",
+    "title": "Workbook — Baptism",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 13,
+    "path": null
+  },
+  {
+    "slug": "13-baptism-guide",
+    "base_slug": "13-baptism",
+    "title": "Catechist's Guide — Baptism",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 13,
+    "path": null
+  },
+  {
+    "slug": "14-confirmation",
+    "base_slug": "14-confirmation",
+    "title": "Confirmation: The Gift of Fortitude",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 14,
+    "path": "/en/sacraments/14-confirmation"
+  },
+  {
+    "slug": "14-confirmation-workbook",
+    "base_slug": "14-confirmation",
+    "title": "Workbook — Confirmation",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 14,
+    "path": null
+  },
+  {
+    "slug": "14-confirmation-guide",
+    "base_slug": "14-confirmation",
+    "title": "Catechist Guide — Confirmation",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 14,
+    "path": null
+  },
+  {
+    "slug": "15-the-eucharist",
+    "base_slug": "15-the-eucharist",
+    "title": "The Eucharist",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 15,
+    "path": "/en/sacraments/15-the-eucharist"
+  },
+  {
+    "slug": "15-the-eucharist-workbook",
+    "base_slug": "15-the-eucharist",
+    "title": "Workbook — The Eucharist",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 15,
+    "path": null
+  },
+  {
+    "slug": "15-the-eucharist-guide",
+    "base_slug": "15-the-eucharist",
+    "title": "Catechist's Guide — The Eucharist",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 15,
+    "path": null
+  },
+  {
+    "slug": "16-reconciliation",
+    "base_slug": "16-reconciliation",
+    "title": "Reconciliation",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 16,
+    "path": "/en/sacraments/16-reconciliation"
+  },
+  {
+    "slug": "16-reconciliation-workbook",
+    "base_slug": "16-reconciliation",
+    "title": "Workbook — Reconciliation",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 16,
+    "path": null
+  },
+  {
+    "slug": "16-reconciliation-guide",
+    "base_slug": "16-reconciliation",
+    "title": "Catechist's Guide — Reconciliation",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 16,
+    "path": null
+  },
+  {
+    "slug": "17-anointing",
+    "base_slug": "17-anointing",
+    "title": "The Anointing of the Sick",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 17,
+    "path": "/en/sacraments/17-anointing"
+  },
+  {
+    "slug": "17-anointing-workbook",
+    "base_slug": "17-anointing",
+    "title": "Workbook — Anointing of the Sick",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 17,
+    "path": null
+  },
+  {
+    "slug": "17-anointing-guide",
+    "base_slug": "17-anointing",
+    "title": "Catechist's Guide — Anointing of the Sick",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 17,
+    "path": null
+  },
+  {
+    "slug": "18-holy-orders",
+    "base_slug": "18-holy-orders",
+    "title": "Holy Orders",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 18,
+    "path": "/en/sacraments/18-holy-orders"
+  },
+  {
+    "slug": "18-holy-orders-workbook",
+    "base_slug": "18-holy-orders",
+    "title": "Workbook — Holy Orders",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 18,
+    "path": null
+  },
+  {
+    "slug": "18-holy-orders-guide",
+    "base_slug": "18-holy-orders",
+    "title": "Catechist Guide — Holy Orders",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 18,
+    "path": null
+  },
+  {
+    "slug": "19-matrimony",
+    "base_slug": "19-matrimony",
+    "title": "Matrimony",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 19,
+    "path": "/en/sacraments/19-matrimony"
+  },
+  {
+    "slug": "19-matrimony-workbook",
+    "base_slug": "19-matrimony",
+    "title": "Workbook — Matrimony",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 19,
+    "path": null
+  },
+  {
+    "slug": "19-matrimony-guide",
+    "base_slug": "19-matrimony",
+    "title": "Catechist Guide — Matrimony",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 19,
+    "path": null
+  },
+  {
+    "slug": "20-sacramentals",
+    "base_slug": "20-sacramentals",
+    "title": "Sacramentals and Funerals",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "lesson",
+    "num": 20,
+    "path": "/en/sacraments/20-sacramentals"
+  },
+  {
+    "slug": "20-sacramentals-workbook",
+    "base_slug": "20-sacramentals",
+    "title": "Workbook — Sacramentals and Funerals",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "workbook",
+    "num": 20,
+    "path": null
+  },
+  {
+    "slug": "20-sacramentals-guide",
+    "base_slug": "20-sacramentals",
+    "title": "Catechist Guide — Sacramentals and Funerals",
+    "section": "sacraments",
+    "lang": "en",
+    "kind": "guide",
+    "num": 20,
+    "path": null
+  },
+  {
+    "slug": "01-deseo-de-dios",
+    "base_slug": "01-deseo-de-dios",
+    "title": "El Deseo de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 1,
+    "path": "/es/credo/01-deseo-de-dios"
+  },
+  {
+    "slug": "01-deseo-de-dios-workbook",
+    "base_slug": "01-deseo-de-dios",
+    "title": "Workbook — El Deseo de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 1,
+    "path": null
+  },
+  {
+    "slug": "01-deseo-de-dios-guide",
+    "base_slug": "01-deseo-de-dios",
+    "title": "Guía del Catequista — El Deseo de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 1,
+    "path": null
+  },
+  {
+    "slug": "02-revelacion-de-dios",
+    "base_slug": "02-revelacion-de-dios",
+    "title": "La Revelación de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 2,
+    "path": "/es/credo/02-revelacion-de-dios"
+  },
+  {
+    "slug": "02-revelacion-de-dios-workbook",
+    "base_slug": "02-revelacion-de-dios",
+    "title": "Workbook — La Revelación de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 2,
+    "path": null
+  },
+  {
+    "slug": "02-revelacion-de-dios-guide",
+    "base_slug": "02-revelacion-de-dios",
+    "title": "Guía del Catequista — La Revelación de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 2,
+    "path": null
+  },
+  {
+    "slug": "03-dios-es-padre",
+    "base_slug": "03-dios-es-padre",
+    "title": "Dios es Padre",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 3,
+    "path": "/es/credo/03-dios-es-padre"
+  },
+  {
+    "slug": "03-dios-es-padre-workbook",
+    "base_slug": "03-dios-es-padre",
+    "title": "Workbook — Dios es Padre",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 3,
+    "path": null
+  },
+  {
+    "slug": "03-dios-es-padre-guide",
+    "base_slug": "03-dios-es-padre",
+    "title": "Guía del Catequista — Dios es Padre",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 3,
+    "path": null
+  },
+  {
+    "slug": "04-jesucristo-dios-y-hombre",
+    "base_slug": "04-jesucristo-dios-y-hombre",
+    "title": "Jesucristo, Dios y Hombre",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 4,
+    "path": "/es/credo/04-jesucristo-dios-y-hombre"
+  },
+  {
+    "slug": "04-jesucristo-dios-y-hombre-workbook",
+    "base_slug": "04-jesucristo-dios-y-hombre",
+    "title": "Workbook — Jesucristo, Dios y Hombre",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 4,
+    "path": null
+  },
+  {
+    "slug": "04-jesucristo-dios-y-hombre-guide",
+    "base_slug": "04-jesucristo-dios-y-hombre",
+    "title": "Guía del Catequista — Jesucristo, Dios y Hombre",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 4,
+    "path": null
+  },
+  {
+    "slug": "05-la-encarnacion",
+    "base_slug": "05-la-encarnacion",
+    "title": "La Encarnación / The Incarnation",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 5,
+    "path": "/es/credo/05-la-encarnacion"
+  },
+  {
+    "slug": "05-la-encarnacion-workbook",
+    "base_slug": "05-la-encarnacion",
+    "title": "Workbook — La Encarnación",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 5,
+    "path": null
+  },
+  {
+    "slug": "05-la-encarnacion-guide",
+    "base_slug": "05-la-encarnacion",
+    "title": "Guía del Catequista — La Encarnación",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 5,
+    "path": null
+  },
+  {
+    "slug": "06-el-espiritu-santo",
+    "base_slug": "06-el-espiritu-santo",
+    "title": "El Espíritu Santo",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 6,
+    "path": "/es/credo/06-el-espiritu-santo"
+  },
+  {
+    "slug": "06-el-espiritu-santo-workbook",
+    "base_slug": "06-el-espiritu-santo",
+    "title": "Workbook — El Espíritu Santo",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 6,
+    "path": null
+  },
+  {
+    "slug": "06-el-espiritu-santo-guide",
+    "base_slug": "06-el-espiritu-santo",
+    "title": "Guía del Catequista — El Espíritu Santo",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 6,
+    "path": null
+  },
+  {
+    "slug": "07-la-santisima-trinidad",
+    "base_slug": "07-la-santisima-trinidad",
+    "title": "La Santísima Trinidad",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 7,
+    "path": "/es/credo/07-la-santisima-trinidad"
+  },
+  {
+    "slug": "07-la-santisima-trinidad-workbook",
+    "base_slug": "07-la-santisima-trinidad",
+    "title": "Workbook — La Santísima Trinidad",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 7,
+    "path": null
+  },
+  {
+    "slug": "07-la-santisima-trinidad-guide",
+    "base_slug": "07-la-santisima-trinidad",
+    "title": "Guía del Catequista — La Santísima Trinidad",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 7,
+    "path": null
+  },
+  {
+    "slug": "08-creacion-y-providencia",
+    "base_slug": "08-creacion-y-providencia",
+    "title": "Creación y Providencia",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 8,
+    "path": "/es/credo/08-creacion-y-providencia"
+  },
+  {
+    "slug": "08-creacion-y-providencia-workbook",
+    "base_slug": "08-creacion-y-providencia",
+    "title": "Workbook — Creación y Providencia",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 8,
+    "path": null
+  },
+  {
+    "slug": "08-creacion-y-providencia-guide",
+    "base_slug": "08-creacion-y-providencia",
+    "title": "Guía del Catequista — Creación y Providencia",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 8,
+    "path": null
+  },
+  {
+    "slug": "09-el-hombre-y-el-pecado",
+    "base_slug": "09-el-hombre-y-el-pecado",
+    "title": "El Hombre y el Pecado / Man and Sin",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 9,
+    "path": "/es/credo/09-el-hombre-y-el-pecado"
+  },
+  {
+    "slug": "09-el-hombre-y-el-pecado-workbook",
+    "base_slug": "09-el-hombre-y-el-pecado",
+    "title": "Workbook — El Hombre y el Pecado",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 9,
+    "path": null
+  },
+  {
+    "slug": "09-el-hombre-y-el-pecado-guide",
+    "base_slug": "09-el-hombre-y-el-pecado",
+    "title": "Guía del Catequista — El Hombre y el Pecado",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 9,
+    "path": null
+  },
+  {
+    "slug": "10-la-iglesia-pueblo-de-dios",
+    "base_slug": "10-la-iglesia-pueblo-de-dios",
+    "title": "La Iglesia, Pueblo de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 10,
+    "path": "/es/credo/10-la-iglesia-pueblo-de-dios"
+  },
+  {
+    "slug": "10-la-iglesia-pueblo-de-dios-workbook",
+    "base_slug": "10-la-iglesia-pueblo-de-dios",
+    "title": "Workbook — La Iglesia, Pueblo de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 10,
+    "path": null
+  },
+  {
+    "slug": "10-la-iglesia-pueblo-de-dios-guide",
+    "base_slug": "10-la-iglesia-pueblo-de-dios",
+    "title": "Guía del Catequista — La Iglesia, Pueblo de Dios",
+    "section": "credo",
+    "lang": "es",
+    "kind": "guide",
+    "num": 10,
+    "path": null
+  },
+  {
+    "slug": "21-la-dignidad-humana",
+    "base_slug": "21-la-dignidad-humana",
+    "title": "La Dignidad Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 21,
+    "path": "/es/moral/21-la-dignidad-humana"
+  },
+  {
+    "slug": "21-la-dignidad-humana-workbook",
+    "base_slug": "21-la-dignidad-humana",
+    "title": "Workbook — La Dignidad Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 21,
+    "path": null
+  },
+  {
+    "slug": "21-la-dignidad-humana-guide",
+    "base_slug": "21-la-dignidad-humana",
+    "title": "Guía del Catequista — La Dignidad Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 21,
+    "path": null
+  },
+  {
+    "slug": "22-la-bienaventuranza",
+    "base_slug": "22-la-bienaventuranza",
+    "title": "La Bienaventuranza",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 22,
+    "path": "/es/moral/22-la-bienaventuranza"
+  },
+  {
+    "slug": "22-la-bienaventuranza-workbook",
+    "base_slug": "22-la-bienaventuranza",
+    "title": "Workbook — La Bienaventuranza",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 22,
+    "path": null
+  },
+  {
+    "slug": "22-la-bienaventuranza-guide",
+    "base_slug": "22-la-bienaventuranza",
+    "title": "Guía del Catequista — La Bienaventuranza",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 22,
+    "path": null
+  },
+  {
+    "slug": "23-la-libertad",
+    "base_slug": "23-la-libertad",
+    "title": "La Libertad del Hombre",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 23,
+    "path": "/es/moral/23-la-libertad"
+  },
+  {
+    "slug": "23-la-libertad-workbook",
+    "base_slug": "23-la-libertad",
+    "title": "Workbook — La Libertad del Hombre",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 23,
+    "path": null
+  },
+  {
+    "slug": "23-la-libertad-guide",
+    "base_slug": "23-la-libertad",
+    "title": "Guía del Catequista — La Libertad del Hombre",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 23,
+    "path": null
+  },
+  {
+    "slug": "24-la-conciencia",
+    "base_slug": "24-la-conciencia",
+    "title": "La Conciencia Moral",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 24,
+    "path": "/es/moral/24-la-conciencia"
+  },
+  {
+    "slug": "24-la-conciencia-workbook",
+    "base_slug": "24-la-conciencia",
+    "title": "Workbook — La Conciencia Moral",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 24,
+    "path": null
+  },
+  {
+    "slug": "24-la-conciencia-guide",
+    "base_slug": "24-la-conciencia",
+    "title": "Guía del Catequista — La Conciencia Moral",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 24,
+    "path": null
+  },
+  {
+    "slug": "25-las-virtudes",
+    "base_slug": "25-las-virtudes",
+    "title": "Las Virtudes",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 25,
+    "path": "/es/moral/25-las-virtudes"
+  },
+  {
+    "slug": "25-las-virtudes-workbook",
+    "base_slug": "25-las-virtudes",
+    "title": "Workbook — Las Virtudes",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 25,
+    "path": null
+  },
+  {
+    "slug": "25-las-virtudes-guide",
+    "base_slug": "25-las-virtudes",
+    "title": "Guía del Catequista — Las Virtudes",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 25,
+    "path": null
+  },
+  {
+    "slug": "26-el-pecado",
+    "base_slug": "26-el-pecado",
+    "title": "El Pecado",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 26,
+    "path": "/es/moral/26-el-pecado"
+  },
+  {
+    "slug": "26-el-pecado-workbook",
+    "base_slug": "26-el-pecado",
+    "title": "Workbook — El Pecado",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 26,
+    "path": null
+  },
+  {
+    "slug": "26-el-pecado-guide",
+    "base_slug": "26-el-pecado",
+    "title": "Guía del Catequista — El Pecado",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 26,
+    "path": null
+  },
+  {
+    "slug": "27-la-justicia",
+    "base_slug": "27-la-justicia",
+    "title": "La Justicia",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 27,
+    "path": "/es/moral/27-la-justicia"
+  },
+  {
+    "slug": "27-la-justicia-workbook",
+    "base_slug": "27-la-justicia",
+    "title": "Workbook — La Justicia",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 27,
+    "path": null
+  },
+  {
+    "slug": "27-la-justicia-guide",
+    "base_slug": "27-la-justicia",
+    "title": "Guía del Catequista — La Justicia",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 27,
+    "path": null
+  },
+  {
+    "slug": "28-el-respeto",
+    "base_slug": "28-el-respeto",
+    "title": "El Respeto a la Vida Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 28,
+    "path": "/es/moral/28-el-respeto"
+  },
+  {
+    "slug": "28-el-respeto-workbook",
+    "base_slug": "28-el-respeto",
+    "title": "Workbook — El Respeto a la Vida Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 28,
+    "path": null
+  },
+  {
+    "slug": "28-el-respeto-guide",
+    "base_slug": "28-el-respeto",
+    "title": "Guía del Catequista — El Respeto a la Vida Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 28,
+    "path": null
+  },
+  {
+    "slug": "29-la-verdad",
+    "base_slug": "29-la-verdad",
+    "title": "La Verdad y la Veracidad",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 29,
+    "path": "/es/moral/29-la-verdad"
+  },
+  {
+    "slug": "29-la-verdad-workbook",
+    "base_slug": "29-la-verdad",
+    "title": "Workbook — La Verdad y la Veracidad",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 29,
+    "path": null
+  },
+  {
+    "slug": "29-la-verdad-guide",
+    "base_slug": "29-la-verdad",
+    "title": "Guía del Catequista — La Verdad y la Veracidad",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 29,
+    "path": null
+  },
+  {
+    "slug": "30-la-sexualidad",
+    "base_slug": "30-la-sexualidad",
+    "title": "La Sexualidad Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 30,
+    "path": "/es/moral/30-la-sexualidad"
+  },
+  {
+    "slug": "30-la-sexualidad-workbook",
+    "base_slug": "30-la-sexualidad",
+    "title": "Workbook — La Sexualidad Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 30,
+    "path": null
+  },
+  {
+    "slug": "30-la-sexualidad-guide",
+    "base_slug": "30-la-sexualidad",
+    "title": "Guía del Catequista — La Sexualidad Humana",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 30,
+    "path": null
+  },
+  {
+    "slug": "31-el-trabajo",
+    "base_slug": "31-el-trabajo",
+    "title": "El Trabajo Humano",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 31,
+    "path": "/es/moral/31-el-trabajo"
+  },
+  {
+    "slug": "31-el-trabajo-workbook",
+    "base_slug": "31-el-trabajo",
+    "title": "Workbook — El Trabajo Humano",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 31,
+    "path": null
+  },
+  {
+    "slug": "31-el-trabajo-guide",
+    "base_slug": "31-el-trabajo",
+    "title": "Guía del Catequista — El Trabajo Humano",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 31,
+    "path": null
+  },
+  {
+    "slug": "32-la-comunidad",
+    "base_slug": "32-la-comunidad",
+    "title": "La Comunidad: Vivir la Fe en Común",
+    "section": "moral",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 32,
+    "path": "/es/moral/32-la-comunidad"
+  },
+  {
+    "slug": "32-la-comunidad-workbook",
+    "base_slug": "32-la-comunidad",
+    "title": "Workbook — La Comunidad: Vivir la Fe en Común",
+    "section": "moral",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 32,
+    "path": null
+  },
+  {
+    "slug": "32-la-comunidad-guide",
+    "base_slug": "32-la-comunidad",
+    "title": "Guía del Catequista — La Comunidad: Vivir la Fe en Común",
+    "section": "moral",
+    "lang": "es",
+    "kind": "guide",
+    "num": 32,
+    "path": null
+  },
+  {
+    "slug": "33-la-oracion-cristiana",
+    "base_slug": "33-la-oracion-cristiana",
+    "title": "La Oración Cristiana",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 33,
+    "path": "/es/oracion/33-la-oracion-cristiana"
+  },
+  {
+    "slug": "33-la-oracion-cristiana-workbook",
+    "base_slug": "33-la-oracion-cristiana",
+    "title": "Workbook — Tema 33: La Oración Cristiana",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 33,
+    "path": null
+  },
+  {
+    "slug": "33-la-oracion-cristiana-guide",
+    "base_slug": "33-la-oracion-cristiana",
+    "title": "Guía del Catequista — Tema 33: La Oración Cristiana",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "guide",
+    "num": 33,
+    "path": null
+  },
+  {
+    "slug": "34-fuentes-de-la-oracion",
+    "base_slug": "34-fuentes-de-la-oracion",
+    "title": "Las Fuentes de la Oración",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 34,
+    "path": "/es/oracion/34-fuentes-de-la-oracion"
+  },
+  {
+    "slug": "34-fuentes-de-la-oracion-workbook",
+    "base_slug": "34-fuentes-de-la-oracion",
+    "title": "Workbook — Las Fuentes de la Oración",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 34,
+    "path": null
+  },
+  {
+    "slug": "34-fuentes-de-la-oracion-guide",
+    "base_slug": "34-fuentes-de-la-oracion",
+    "title": "Guía del Catequista — Las Fuentes de la Oración",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "guide",
+    "num": 34,
+    "path": null
+  },
+  {
+    "slug": "35-tradicion-contemplativa",
+    "base_slug": "35-tradicion-contemplativa",
+    "title": "La Tradición Contemplativa",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 35,
+    "path": "/es/oracion/35-tradicion-contemplativa"
+  },
+  {
+    "slug": "35-tradicion-contemplativa-workbook",
+    "base_slug": "35-tradicion-contemplativa",
+    "title": "Workbook — La Tradición Contemplativa",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 35,
+    "path": null
+  },
+  {
+    "slug": "35-tradicion-contemplativa-guide",
+    "base_slug": "35-tradicion-contemplativa",
+    "title": "Guía del Catequista — La Tradición Contemplativa",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "guide",
+    "num": 35,
+    "path": null
+  },
+  {
+    "slug": "36-el-padre-nuestro",
+    "base_slug": "36-el-padre-nuestro",
+    "title": "El Padre Nuestro",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 36,
+    "path": "/es/oracion/36-el-padre-nuestro"
+  },
+  {
+    "slug": "36-el-padre-nuestro-workbook",
+    "base_slug": "36-el-padre-nuestro",
+    "title": "Workbook — El Padre Nuestro",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 36,
+    "path": null
+  },
+  {
+    "slug": "36-el-padre-nuestro-guide",
+    "base_slug": "36-el-padre-nuestro",
+    "title": "Guía del Catequista — El Padre Nuestro",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "guide",
+    "num": 36,
+    "path": null
+  },
+  {
+    "slug": "37-las-siete-peticiones",
+    "base_slug": "37-las-siete-peticiones",
+    "title": "Las Siete Peticiones",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 37,
+    "path": "/es/oracion/37-las-siete-peticiones"
+  },
+  {
+    "slug": "37-las-siete-peticiones-workbook",
+    "base_slug": "37-las-siete-peticiones",
+    "title": "Workbook — Las Siete Peticiones",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 37,
+    "path": null
+  },
+  {
+    "slug": "37-las-siete-peticiones-guide",
+    "base_slug": "37-las-siete-peticiones",
+    "title": "Guía del Catequista — Las Siete Peticiones",
+    "section": "oracion",
+    "lang": "es",
+    "kind": "guide",
+    "num": 37,
+    "path": null
+  },
+  {
+    "slug": "11-la-liturgia",
+    "base_slug": "11-la-liturgia",
+    "title": "La Liturgia",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 11,
+    "path": "/es/sacramentos/11-la-liturgia"
+  },
+  {
+    "slug": "11-la-liturgia-workbook",
+    "base_slug": "11-la-liturgia",
+    "title": "Workbook — La Liturgia",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 11,
+    "path": null
+  },
+  {
+    "slug": "11-la-liturgia-guide",
+    "base_slug": "11-la-liturgia",
+    "title": "Guía del Catequista — La Liturgia",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 11,
+    "path": null
+  },
+  {
+    "slug": "12-el-misterio-pascual",
+    "base_slug": "12-el-misterio-pascual",
+    "title": "El Misterio Pascual",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 12,
+    "path": "/es/sacramentos/12-el-misterio-pascual"
+  },
+  {
+    "slug": "12-el-misterio-pascual-workbook",
+    "base_slug": "12-el-misterio-pascual",
+    "title": "Workbook — El Misterio Pascual",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 12,
+    "path": null
+  },
+  {
+    "slug": "12-el-misterio-pascual-guide",
+    "base_slug": "12-el-misterio-pascual",
+    "title": "Guía del Catequista — El Misterio Pascual",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 12,
+    "path": null
+  },
+  {
+    "slug": "13-el-bautismo",
+    "base_slug": "13-el-bautismo",
+    "title": "El Bautismo",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 13,
+    "path": "/es/sacramentos/13-el-bautismo"
+  },
+  {
+    "slug": "13-el-bautismo-workbook",
+    "base_slug": "13-el-bautismo",
+    "title": "Workbook — El Bautismo",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 13,
+    "path": null
+  },
+  {
+    "slug": "13-el-bautismo-guide",
+    "base_slug": "13-el-bautismo",
+    "title": "Guía del Catequista — El Bautismo",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 13,
+    "path": null
+  },
+  {
+    "slug": "14-la-confirmacion",
+    "base_slug": "14-la-confirmacion",
+    "title": "La Confirmación: El Don de la Fortaleza",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 14,
+    "path": "/es/sacramentos/14-la-confirmacion"
+  },
+  {
+    "slug": "14-la-confirmacion-workbook",
+    "base_slug": "14-la-confirmacion",
+    "title": "Workbook — La Confirmación",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 14,
+    "path": null
+  },
+  {
+    "slug": "14-la-confirmacion-guide",
+    "base_slug": "14-la-confirmacion",
+    "title": "Guía del Catequista — La Confirmación",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 14,
+    "path": null
+  },
+  {
+    "slug": "15-la-eucaristia",
+    "base_slug": "15-la-eucaristia",
+    "title": "La Eucaristía",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 15,
+    "path": "/es/sacramentos/15-la-eucaristia"
+  },
+  {
+    "slug": "15-la-eucaristia-workbook",
+    "base_slug": "15-la-eucaristia",
+    "title": "Workbook — La Eucaristía",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 15,
+    "path": null
+  },
+  {
+    "slug": "15-la-eucaristia-guide",
+    "base_slug": "15-la-eucaristia",
+    "title": "Guía del Catequista — La Eucaristía",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 15,
+    "path": null
+  },
+  {
+    "slug": "16-la-reconciliacion",
+    "base_slug": "16-la-reconciliacion",
+    "title": "La Reconciliación",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 16,
+    "path": "/es/sacramentos/16-la-reconciliacion"
+  },
+  {
+    "slug": "16-la-reconciliacion-workbook",
+    "base_slug": "16-la-reconciliacion",
+    "title": "Workbook — La Reconciliación",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 16,
+    "path": null
+  },
+  {
+    "slug": "16-la-reconciliacion-guide",
+    "base_slug": "16-la-reconciliacion",
+    "title": "Guía del Catequista — La Reconciliación",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 16,
+    "path": null
+  },
+  {
+    "slug": "17-la-uncion",
+    "base_slug": "17-la-uncion",
+    "title": "La Unción de los Enfermos",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 17,
+    "path": "/es/sacramentos/17-la-uncion"
+  },
+  {
+    "slug": "17-la-uncion-workbook",
+    "base_slug": "17-la-uncion",
+    "title": "Workbook — La Unción de los Enfermos",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 17,
+    "path": null
+  },
+  {
+    "slug": "17-la-uncion-guide",
+    "base_slug": "17-la-uncion",
+    "title": "Guía del Catequista — La Unción de los Enfermos",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 17,
+    "path": null
+  },
+  {
+    "slug": "18-el-orden",
+    "base_slug": "18-el-orden",
+    "title": "El Orden Sagrado",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 18,
+    "path": "/es/sacramentos/18-el-orden"
+  },
+  {
+    "slug": "18-el-orden-workbook",
+    "base_slug": "18-el-orden",
+    "title": "Workbook — El Orden Sagrado",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 18,
+    "path": null
+  },
+  {
+    "slug": "18-el-orden-guide",
+    "base_slug": "18-el-orden",
+    "title": "Guía del Catequista — El Orden Sagrado",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 18,
+    "path": null
+  },
+  {
+    "slug": "19-el-matrimonio",
+    "base_slug": "19-el-matrimonio",
+    "title": "El Matrimonio",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 19,
+    "path": "/es/sacramentos/19-el-matrimonio"
+  },
+  {
+    "slug": "19-el-matrimonio-workbook",
+    "base_slug": "19-el-matrimonio",
+    "title": "Workbook — El Matrimonio",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 19,
+    "path": null
+  },
+  {
+    "slug": "19-el-matrimonio-guide",
+    "base_slug": "19-el-matrimonio",
+    "title": "Guía del Catequista — El Matrimonio",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 19,
+    "path": null
+  },
+  {
+    "slug": "20-la-comunion",
+    "base_slug": "20-la-comunion",
+    "title": "Los Sacramentales y Las Exequias",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "lesson",
+    "num": 20,
+    "path": "/es/sacramentos/20-la-comunion"
+  },
+  {
+    "slug": "20-la-comunion-workbook",
+    "base_slug": "20-la-comunion",
+    "title": "Workbook — Los Sacramentales y Las Exequias",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "workbook",
+    "num": 20,
+    "path": null
+  },
+  {
+    "slug": "20-la-comunion-guide",
+    "base_slug": "20-la-comunion",
+    "title": "Guía del Catequista — Los Sacramentales y Las Exequias",
+    "section": "sacramentos",
+    "lang": "es",
+    "kind": "guide",
+    "num": 20,
+    "path": null
+  }
+]
