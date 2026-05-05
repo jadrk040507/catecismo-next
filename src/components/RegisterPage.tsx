@@ -55,7 +55,7 @@ export default function RegisterPage({ lang = "es" }: { lang?: string }) {
       <div className="card-gold-border p-8 animate-fade-up">
         <div className="text-center mb-6">
           <span className="text-4xl mb-3 block">✝</span>
-          <h1 className="font-serif text-2xl font-bold text-ink">{t.title}</h1>
+          <h1 className="text-2xl font-bold text-ink">{t.title}</h1>
         </div>
 
         {error && (

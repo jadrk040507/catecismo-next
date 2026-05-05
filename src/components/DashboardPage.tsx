@@ -111,7 +111,7 @@ export default function DashboardPage() {
       await Promise.all([
         (s.from("class_students") as any).delete().eq("student_id", userId),
         (s.from("class_catechists") as any).delete().eq("catechist_id", userId),
-        (s.from("progress") as any).delete().eq("user_id", userId),
+        (s.from("lesson_progress") as any).delete().eq("user_id", userId),
         (s.from("parent_child_links") as any).delete().or(`parent_id.eq.${userId},child_id.eq.${userId}`),
       ]);
       await (s.from("profiles") as any).delete().eq("id", userId);

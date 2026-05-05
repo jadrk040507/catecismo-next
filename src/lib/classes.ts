@@ -430,8 +430,8 @@ export async function getClassStudents(
     profileMap.set(p.id, p);
   }
 
-  // Obtener progreso (quiz scores) de la tabla progress
-  const { data: progress } = await (sb.from("progress") as any)
+  // Obtener progreso (quiz scores) de la tabla lesson_progress
+  const { data: progress } = await (sb.from("lesson_progress") as any)
     .select("user_id, quiz_score")
     .in("user_id", studentIds);
 
@@ -1022,8 +1022,8 @@ export async function getGradebook(classId: number): Promise<{
   if (students.length > 0) {
     const studentIds = students.map((s) => s.student_id);
     const { data: progressRows } = await (sb
-      .from("progress") as any)
-      .select("user_id, lesson_slug, quiz_score, completed")
+      .from("lesson_progress") as any)
+      .select("user_id, lesson_slug, quiz_score, status")
       .in("user_id", studentIds);
 
     for (const student of students) {
@@ -1039,7 +1039,7 @@ export async function getGradebook(classId: number): Promise<{
       const assignmentId = assignmentMap.get(p.lesson_slug);
       if (assignmentId && grades[p.user_id]) {
         grades[p.user_id][assignmentId] = {
-          completed: p.completed || false,
+          completed: p.status === "completed",
           score: p.quiz_score ?? null,
         };
       }

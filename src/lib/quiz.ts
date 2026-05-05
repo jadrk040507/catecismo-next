@@ -408,13 +408,13 @@ export async function submitQuizScore(
   const pct = Math.round((score / total) * 100);
   const now = new Date().toISOString();
 
-  await supabase.from("progress").upsert(
+  await supabase.from("lesson_progress").upsert(
     {
       user_id: user.id,
-      lesson_path: lessonPath,
+      lesson_slug: lessonPath,
       quiz_score: pct,
-      last_activity_at: now,
+      status: pct >= 70 ? "completed" : "in_progress",
     } as any,
-    { onConflict: "user_id,lesson_path" }
+    { onConflict: "user_id,lesson_slug" }
   );
 }

@@ -43,7 +43,7 @@ export default async function LessonPage({ params }: { params: Promise<Params> }
   if (!data) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-24 text-center">
-        <h1 className="font-serif text-2xl font-bold text-ink mb-4">404</h1>
+        <h1 className="text-2xl font-bold text-ink mb-4">404</h1>
         <p className="text-ink-soft">Lección no encontrada</p>
       </div>
     );
