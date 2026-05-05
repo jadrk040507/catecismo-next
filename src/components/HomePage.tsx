@@ -77,7 +77,7 @@ export default function HomePage({ lang }: { lang?: string }) {
         <h1 className="animate-fade-up">
           {actualLang === "en" ? "Catechism" : "Catecismo"}
         </h1>
-        <p className="stagger-1 animate-fade-up" style={{ maxWidth: 480, margin: "0 auto 36px" }}>
+        <p className="stagger-1 animate-fade-up" style={{ maxWidth: 480, margin: "0 auto 24px" }}>
           {actualLang === "en"
             ? "Catholic formation, free, for everyone. Based on the Catechism of the Catholic Church."
             : "Formación católica, gratuita, para todos. Basado en el Catecismo de la Iglesia Católica."}
@@ -110,8 +110,8 @@ export default function HomePage({ lang }: { lang?: string }) {
       </div>
 
       {/* Topic Grid */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 28px 56px" }}>
-        <div className="stagger-2 animate-fade-up" style={{ textAlign: "center", marginBottom: 36 }}>
+      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 24px 32px" }}>
+        <div className="stagger-2 animate-fade-up" style={{ textAlign: "center", marginBottom: 24 }}>
           <div className="tag">
             {actualLang === "en" ? "Four Pillars" : "Cuatro Pilares"}
           </div>
@@ -150,7 +150,7 @@ export default function HomePage({ lang }: { lang?: string }) {
       {/* Features */}
       <section style={{ background: "var(--color-surface)", borderTop: "1px solid var(--color-border-light)", borderBottom: "1px solid var(--color-border-light)" }}>
         <div className="feature-section">
-          <div className="stagger-3 animate-fade-up" style={{ textAlign: "center", marginBottom: 36 }}>
+          <div className="stagger-3 animate-fade-up" style={{ textAlign: "center", marginBottom: 24 }}>
             <div className="tag">
               {actualLang === "en" ? "Features" : "Características"}
             </div>
@@ -172,7 +172,7 @@ export default function HomePage({ lang }: { lang?: string }) {
 
       {/* Login CTA for non-authenticated */}
       {!isLoggedIn && (
-        <section style={{ maxWidth: 720, margin: "0 auto", padding: "48px 28px" }}>
+        <section style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
           <div className="login-cta">
             <p>
               {actualLang === "en"

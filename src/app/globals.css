@@ -3,8 +3,8 @@
 
 @theme {
   --color-primary: #37352F;
-  --color-secondary: #787774;
-  --color-tertiary: #B4B2AB;
+  --color-secondary: #6B6A67;
+  --color-tertiary: #9A9891;
   --color-neutral: #F7F6F3;
   --color-surface: #FFFFFF;
   --color-border: #E8E7E4;
@@ -149,12 +149,12 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.65rem;
+  font-size: 0.625rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--color-tertiary);
-  margin-bottom: 16px;
+  color: var(--color-secondary);
+  margin-bottom: 8px;
 }
 .tag::before {
   content: '';
@@ -211,33 +211,34 @@ body::after {
 
 /* === Public Page: Home === */
 .home-hero {
-  max-width: 720px;
+  max-width: 640px;
   margin: 0 auto;
-  padding: 80px 28px 56px;
+  padding: 48px 24px 24px;
   text-align: center;
 }
 @media (max-width: 480px) {
-  .home-hero { padding: 56px 20px 40px; }
+  .home-hero { padding: 32px 20px 20px; }
 }
 .home-hero h1 {
-  font-size: clamp(2rem, 8vw, 3rem);
+  font-size: clamp(1.75rem, 6vw, 2.75rem);
   font-weight: 700;
   color: var(--color-primary);
   letter-spacing: -0.03em;
   line-height: 1.1;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 .home-hero p {
-  font-size: 1.125rem;
-  color: var(--color-secondary);
-  line-height: 1.7;
-  margin-bottom: 36px;
+  font-size: 1rem;
+  color: var(--color-primary);
+  opacity: 0.7;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 
 .search-box {
   position: relative;
   max-width: 480px;
-  margin: 0 auto 40px;
+  margin: 0 auto 20px;
 }
 .search-box input {
   width: 100%;
@@ -256,14 +257,14 @@ body::after {
   box-shadow: 0 0 0 3px rgba(46, 170, 220, 0.12);
 }
 .search-box input::placeholder {
-  color: var(--color-tertiary);
+  color: var(--color-secondary);
 }
 .search-box-icon {
   position: absolute;
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--color-tertiary);
+  color: var(--color-secondary);
   pointer-events: none;
   display: flex;
 }
@@ -284,8 +285,14 @@ body::after {
 @media (min-width: 768px) {
   .topic-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
 }
+@media (min-width: 481px) and (max-width: 767px) {
+  .topic-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}
 @media (max-width: 480px) {
-  .topic-grid { gap: 10px; padding: 0 20px; }
+  .topic-grid { grid-template-columns: 1fr; gap: 10px; padding: 0 20px; }
+  .topic-card { padding: 16px; }
+  .topic-card h3 { font-size: 0.9375rem; }
+  .topic-card p { font-size: 0.8125rem; }
   .topic-row { flex-wrap: wrap; gap: 8px; padding: 14px 16px; }
   .topic-row-meta { width: 100%; gap: 8px; margin-top: 4px; }
   .topic-row-num { width: 28px; height: 28px; font-size: 0.75rem; }
@@ -343,10 +350,11 @@ body::after {
   margin-bottom: 4px;
 }
 .topic-card p {
-  font-size: 0.8125rem;
-  color: var(--color-secondary);
-  line-height: 1.5;
-  margin-bottom: 12px;
+  font-size: 0.875rem;
+  color: var(--color-primary);
+  opacity: 0.65;
+  line-height: 1.55;
+  margin: 0;
 }
 .topic-card-meta {
   display: flex;
@@ -356,7 +364,7 @@ body::after {
 .topic-card-meta span {
   font-size: 0.6875rem;
   font-weight: 500;
-  color: var(--color-tertiary);
+  color: var(--color-secondary);
   background: var(--color-neutral);
   padding: 2px 8px;
   border-radius: var(--radius-xs);
@@ -663,7 +671,8 @@ body::after {
 }
 .login-cta p {
   font-size: 0.875rem;
-  color: var(--color-secondary);
+  color: var(--color-primary);
+  opacity: 0.75;
   margin: 0;
 }
 .login-cta a {
@@ -948,10 +957,10 @@ body::after {
 .feature-section {
   max-width: 960px;
   margin: 0 auto;
-  padding: 64px 28px;
+  padding: 40px 24px;
 }
 @media (max-width: 480px) {
-  .feature-section { padding: 48px 20px; }
+  .feature-section { padding: 28px 20px; }
 }
 .feature-grid {
   display: grid;
@@ -963,7 +972,7 @@ body::after {
   .feature-grid { grid-template-columns: 1fr; gap: 1px; }
 }
 .feature-card {
-  padding: 32px;
+  padding: 24px;
   background: var(--color-surface);
   transition: background 0.3s;
 }
@@ -978,7 +987,8 @@ body::after {
 }
 .feature-card p {
   font-size: 0.8125rem;
-  color: var(--color-secondary);
+  color: var(--color-primary);
+  opacity: 0.65;
   line-height: 1.6;
 }
 
