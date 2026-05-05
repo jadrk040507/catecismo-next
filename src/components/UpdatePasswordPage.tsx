@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabase } from "@/lib/supabase";
 
 export default function UpdatePasswordPage({ lang = "es" }: { lang?: "es" | "en" }) {
   const pathname = usePathname();
@@ -19,7 +19,8 @@ export default function UpdatePasswordPage({ lang = "es" }: { lang?: "es" | "en"
     if (password !== confirm) { setError(isEn ? "Passwords don't match" : "Las contraseñas no coinciden"); return; }
     setLoading(true); setError("");
     try {
-      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || "", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "");
+      const supabase = getSupabase();
+      if (!supabase) { setError(isEn ? "Configuration error" : "Error de configuración"); setLoading(false); return; }
       const { error: err } = await supabase.auth.updateUser({ password });
       if (err) throw err;
       setDone(true);
@@ -33,7 +34,7 @@ export default function UpdatePasswordPage({ lang = "es" }: { lang?: "es" | "en"
       <div className="container" style={{ maxWidth: 440, margin: "80px auto", textAlign: "center" }}>
         <div style={{ fontSize: "2.5rem", marginBottom: 12 }}>✅</div>
         <h1 style={{ fontSize: "1.5rem", marginBottom: 8 }}>{isEn ? "Password updated!" : "¡Contraseña actualizada!"}</h1>
-        <p style={{ color: "var(--text-secondary)", marginBottom: 20 }}>
+        <p style={{ color: "var(--color-secondary)", marginBottom: 20 }}>
           {isEn ? "You can now sign in with your new password." : "Ahora puedes iniciar sesión con tu nueva contraseña."}
         </p>
         <a href={isEn ? "/en/login" : "/login"} className="btn btn-dark">
@@ -46,7 +47,7 @@ export default function UpdatePasswordPage({ lang = "es" }: { lang?: "es" | "en"
   return (
     <div className="container" style={{ maxWidth: 440, margin: "80px auto" }}>
       <h1 style={{ fontSize: "1.5rem", marginBottom: 8 }}>{isEn ? "Set New Password" : "Nueva Contraseña"}</h1>
-      <p style={{ color: "var(--text-secondary)", marginBottom: 24 }}>
+      <p style={{ color: "var(--color-secondary)", marginBottom: 24 }}>
         {isEn ? "Enter your new password below." : "Ingresa tu nueva contraseña."}
       </p>
       {error && <div style={{ color: "var(--color-red)", fontSize: 13, marginBottom: 16, padding: "8px 12px", background: "#FEF2F2", borderRadius: 6 }}>{error}</div>}

@@ -33,12 +33,6 @@ export interface DashboardStats {
   streakAvg: number;
 }
 
-// ─── Shared Supabase client ──────────────────────────────────────────────────
-
-function supabase() {
-  return getSupabase();
-}
-
 // ─── useUsers ────────────────────────────────────────────────────────────────
 
 export function useUsers() {
@@ -47,7 +41,9 @@ export function useUsers() {
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase().from("profiles").select("*").order("created_at", { ascending: false });
+    const supabase = getSupabase();
+    if (!supabase) { setUsers([]); setLoading(false); return; }
+    const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
     setUsers((data || []) as Profile[]);
     setLoading(false);
   }, []);
@@ -65,7 +61,9 @@ export function useStats() {
 
   const fetchStats = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase().from("profiles").select("*");
+    const supabase = getSupabase();
+    if (!supabase) { setLoading(false); return; }
+    const { data } = await supabase.from("profiles").select("*");
     const profiles = (data || []) as Profile[];
     const today = new Date().toISOString().split("T")[0];
     setStats({
@@ -91,7 +89,9 @@ export function useLessonStats() {
   const [lessons, setLessons] = useState<LessonStat[]>([]);
 
   useEffect(() => {
-    supabase().from("lesson_stats").select("*").order("completions", { ascending: false }).then(({ data }) => {
+    const supabase = getSupabase();
+    if (!supabase) return;
+    supabase.from("lesson_stats").select("*").order("completions", { ascending: false }).then(({ data }) => {
       setLessons((data || []) as LessonStat[]);
     });
   }, []);
@@ -106,7 +106,9 @@ export function usePromoteUser(refetch: () => void) {
 
   async function promote(userId: string) {
     setPending(true);
-    const { error } = await (supabase().from("profiles") as any).update({ role: "admin" }).eq("id", userId);
+    const supabase = getSupabase();
+    if (!supabase) throw new Error("No supabase configured");
+    const { error } = await (supabase.from("profiles") as any).update({ role: "admin" }).eq("id", userId);
     setPending(false);
     if (error) throw error;
     refetch();
@@ -119,11 +121,13 @@ export function usePromoteUser(refetch: () => void) {
 
 export function useRealtimeUsers(onChange: () => void) {
   useEffect(() => {
-    const channel = supabase()
+    const supabase = getSupabase();
+    if (!supabase) return;
+    const channel = supabase
       .channel("dashboard-users")
       .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, onChange)
       .subscribe();
 
-    return () => { supabase().removeChannel(channel); };
+    return () => { supabase.removeChannel(channel); };
   }, [onChange]);
 }

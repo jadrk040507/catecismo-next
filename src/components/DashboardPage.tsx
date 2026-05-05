@@ -16,6 +16,8 @@ import CatechistDashboard from "@/components/CatechistDashboard";
 import ClassDetail from "@/components/ClassDetail";
 import StudentDashboard from "@/components/StudentDashboard";
 import ParentDashboard from "@/components/ParentDashboard";
+import ParishDashboard from "@/components/ParishDashboard";
+import ContentManager from "@/components/ContentManager";
 import {
   LayoutDashboard,
   Users,
@@ -30,9 +32,10 @@ import {
   GraduationCap,
   Heart,
   Menu,
+  Church,
 } from "lucide-react";
 
-type Tab = "overview" | "users" | "classes" | "content" | "analytics" | "settings";
+type Tab = "overview" | "users" | "classes" | "content" | "analytics" | "parish" | "settings";
 
 export default function DashboardPage() {
   const { isLoggedIn, isAdmin, isCatechist, isSuperAdmin, isStudent, isParent, user, loading: authLoading, logout } = useAuth();
@@ -46,6 +49,12 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+
+  // Toggle body scroll lock when sidebar is open on mobile
+  useEffect(() => {
+    document.body.classList.toggle("sidebar-open", sidebarOpen);
+    return () => document.body.classList.remove("sidebar-open");
+  }, [sidebarOpen]);
 
   // Data hooks
   const { users, loading: usersLoading, refetch: refetchUsers } = useUsers();
@@ -82,7 +91,9 @@ export default function DashboardPage() {
   // Role change (super_admin only)
   async function handleRoleChange(userId: string, newRole: string) {
     try {
-      await (getSupabase().from("profiles") as any).update({ role: newRole }).eq("id", userId);
+      const sb = getSupabase();
+      if (!sb) throw new Error("No supabase configured");
+      await (sb.from("profiles") as any).update({ role: newRole }).eq("id", userId);
       refetchUsers();
       refetchStats();
       showMessage(isEn ? "Role updated" : "Rol actualizado");
@@ -96,6 +107,7 @@ export default function DashboardPage() {
     if (!confirm(isEn ? "Delete this user permanently?" : "¿Eliminar este usuario permanentamente?")) return;
     try {
       const s = getSupabase();
+      if (!s) throw new Error("No supabase configured");
       await Promise.all([
         (s.from("class_students") as any).delete().eq("student_id", userId),
         (s.from("class_catechists") as any).delete().eq("catechist_id", userId),
@@ -168,6 +180,7 @@ export default function DashboardPage() {
       permAnalytics: { es: "Ver analíticas", en: "View analytics" },
       permAdmin: { es: "Panel de administración", en: "Admin panel" },
       welcomeBack: { es: "Bienvenido de vuelta", en: "Welcome back" },
+      parish: { es: "Parroquia", en: "Parish" },
     }) as Record<string, { es: string; en: string }>)[key]?.[isEn ? "en" : "es"] || key;
 
   // Role badge component
@@ -195,9 +208,9 @@ export default function DashboardPage() {
             </button>
           ))}
           <div className="db-sidebar-section">{t("manage")}</div>
-          {(["users", "classes", "content"] as Tab[]).map(tn => (
+          {(["users", "classes", "content", "parish"] as Tab[]).map(tn => (
             <button key={tn} className={`db-sidebar-item${tab === tn ? " active" : ""}`} onClick={() => { setTab(tn); setSidebarOpen(false); setSelectedClassId(null); }}>
-              <span className="item-icon">{tn === "users" ? <Users size={16} /> : tn === "classes" ? <School size={16} /> : <BookOpen size={16} />}</span>{t(tn)}
+              <span className="item-icon">{tn === "users" ? <Users size={16} /> : tn === "classes" ? <School size={16} /> : tn === "content" ? <BookOpen size={16} /> : <Church size={16} />}</span>{t(tn)}
               {tn === "users" && users.length > 0 && <span className="db-sidebar-badge">{users.length}</span>}
             </button>
           ))}
@@ -564,14 +577,12 @@ export default function DashboardPage() {
 
               {/* ─── CONTENT ─── */}
               {tab === "content" && (
-                <div>
-                  <h1>{t("content")}</h1>
-                  <p className="db-subtitle">{isEn ? "Manage lessons, workbooks, and guides." : "Gestiona lecciones, workbooks y guías."}</p>
-                  <div className="db-empty" style={{ marginTop: 32 }}>
-                    <span className="db-empty-icon">📚</span>
-                    <p>{isEn ? "Content management coming soon." : "Gestión de contenido próximamente."}</p>
-                  </div>
-                </div>
+                <ContentManager />
+              )}
+
+              {/* ─── PARISH ─── */}
+              {tab === "parish" && (
+                <ParishDashboard />
               )}
 
               {/* ─── SETTINGS ─── */}
@@ -592,7 +603,7 @@ function SettingsPanel({ isEn, user }: { isEn: boolean; user: { email?: string; 
   const [pw, setPw] = useState("");
   const [msg, setMsg] = useState("");
   const [saving, setSaving] = useState(false);
-  const supabase = getSupabase();
+  const sb = getSupabase();
 
   const t = (k: string) => (({
     settings: { es: "Ajustes", en: "Settings" },
@@ -608,12 +619,13 @@ function SettingsPanel({ isEn, user }: { isEn: boolean; user: { email?: string; 
   }) as any)[k]?.[isEn ? "en" : "es"] || k;
 
   async function saveProfile() {
+    if (!sb) { setMsg(isEn ? "Configuration error" : "Error de configuración"); return; }
     setSaving(true);
     try {
-      const { data: { user: u } } = await supabase.auth.getUser();
+      const { data: { user: u } } = await sb.auth.getUser();
       if (u && name) {
-        await (supabase.from("profiles") as any).update({ full_name: name }).eq("id", u.id);
-        await supabase.auth.updateUser({ data: { full_name: name } });
+        await (sb.from("profiles") as any).update({ full_name: name }).eq("id", u.id);
+        await sb.auth.updateUser({ data: { full_name: name } });
       }
       setMsg(t("saved"));
     } catch (e: any) { setMsg(e.message); }
@@ -621,9 +633,10 @@ function SettingsPanel({ isEn, user }: { isEn: boolean; user: { email?: string; 
   }
 
   async function changePassword() {
+    if (!sb) { setMsg(isEn ? "Configuration error" : "Error de configuración"); return; }
     setSaving(true);
     try {
-      const { error } = await supabase.auth.updateUser({ password: pw });
+      const { error } = await sb.auth.updateUser({ password: pw });
       if (error) throw error;
       setMsg(t("pwUpdated")); setPw("");
     } catch (e: any) { setMsg(e.message); }

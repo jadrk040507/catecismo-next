@@ -67,7 +67,8 @@ export default function HomePage({ lang }: { lang?: string }) {
   const { isLoggedIn } = useAuth();
   const pathname = usePathname();
   const actualLang = lang || (pathname.startsWith("/en") ? "en" : "es");
-  const [searchFocused, setSearchFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const q = searchQuery.trim().toLowerCase();
 
   return (
     <>
@@ -76,7 +77,7 @@ export default function HomePage({ lang }: { lang?: string }) {
         <h1 className="animate-fade-up">
           {actualLang === "en" ? "Catechism" : "Catecismo"}
         </h1>
-        <p className="stagger-1 animate-fade-up">
+        <p className="stagger-1 animate-fade-up" style={{ maxWidth: 480, margin: "0 auto 36px" }}>
           {actualLang === "en"
             ? "Catholic formation, free, for everyone. Based on the Catechism of the Catholic Church."
             : "Formación católica, gratuita, para todos. Basado en el Catecismo de la Iglesia Católica."}
@@ -84,15 +85,19 @@ export default function HomePage({ lang }: { lang?: string }) {
 
         {/* Search */}
         <div className="search-box stagger-2 animate-fade-up">
-          <span className="search-box-icon">🔍</span>
+          <span className="search-box-icon">
+            <Search size={18} strokeWidth={2} />
+          </span>
           <input
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={actualLang === "en" ? "Search lessons, topics, references…" : "Buscar lecciones, temas, referencias…"}
           />
         </div>
 
         {/* CTAs */}
-        <div className="stagger-3 animate-fade-up" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+        <div className="stagger-3 animate-fade-up" style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <Link href={actualLang === "en" ? "/en/credo" : "/es/credo"} className="btn btn-primary">
             {actualLang === "en" ? "Explore lessons" : "Explorar clases"}
           </Link>
@@ -105,22 +110,30 @@ export default function HomePage({ lang }: { lang?: string }) {
       </div>
 
       {/* Topic Grid */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 24px 48px" }}>
-        <div className="stagger-2 animate-fade-up" style={{ textAlign: "center", marginBottom: 32 }}>
-          <h2 style={{ fontSize: "1.5rem", fontWeight: 600, color: "var(--color-primary)", letterSpacing: "-0.01em", marginBottom: 8 }}>
+      <section style={{ maxWidth: 960, margin: "0 auto", padding: "0 28px 56px" }}>
+        <div className="stagger-2 animate-fade-up" style={{ textAlign: "center", marginBottom: 36 }}>
+          <div className="tag">
+            {actualLang === "en" ? "Four Pillars" : "Cuatro Pilares"}
+          </div>
+          <h2 style={{ fontSize: "1.5rem", fontWeight: 600, color: "var(--color-primary)", letterSpacing: "-0.02em", marginBottom: 6 }}>
             {actualLang === "en" ? "Explore the Catechism" : "Explora el Catecismo"}
           </h2>
           <p style={{ fontSize: "0.9375rem", color: "var(--color-secondary)" }}>
-            {actualLang === "en" ? "Four pillars. One faith." : "Cuatro pilares. Una sola fe."}
+            {actualLang === "en" ? "One faith, four parts." : "Una sola fe, cuatro partes."}
           </p>
         </div>
         <div className="topic-grid">
-          {sections.map((section, i) => (
+          {sections.filter(s => {
+            if (!q) return true;
+            const t = s.title[actualLang as keyof typeof s.title].toLowerCase();
+            const d = s.desc[actualLang as keyof typeof s.desc].toLowerCase();
+            return t.includes(q) || d.includes(q);
+          }).map((section, i) => (
             <Link
               key={section.href}
               href={actualLang === "en" ? section.enHref : section.href}
-              className="topic-card stagger-3 animate-fade-up"
-              style={{ animationDelay: `${0.1 + i * 0.06}s` }}
+              className="topic-card animate-fade-up"
+              style={{ animationDelay: `${0.05 + i * 0.06}s`, opacity: 0 }}
             >
               <div className="topic-card-icon">{section.icon}</div>
               <h3>{section.title[actualLang as keyof typeof section.title]}</h3>
@@ -137,14 +150,17 @@ export default function HomePage({ lang }: { lang?: string }) {
       {/* Features */}
       <section style={{ background: "var(--color-surface)", borderTop: "1px solid var(--color-border-light)", borderBottom: "1px solid var(--color-border-light)" }}>
         <div className="feature-section">
-          <div className="stagger-3 animate-fade-up" style={{ textAlign: "center", marginBottom: 32 }}>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 600, color: "var(--color-primary)", letterSpacing: "-0.01em" }}>
+          <div className="stagger-3 animate-fade-up" style={{ textAlign: "center", marginBottom: 36 }}>
+            <div className="tag">
+              {actualLang === "en" ? "Features" : "Características"}
+            </div>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 600, color: "var(--color-primary)", letterSpacing: "-0.02em" }}>
               {actualLang === "en" ? "Why Catecismo?" : "¿Por qué Catecismo?"}
             </h2>
           </div>
           <div className="feature-grid">
             {features.map((f, i) => (
-              <div key={i} className="feature-card stagger-4 animate-fade-up" style={{ animationDelay: `${0.15 + i * 0.08}s` }}>
+              <div key={i} className="feature-card animate-fade-up" style={{ animationDelay: `${0.1 + i * 0.08}s`, opacity: 0 }}>
                 <div className="feature-card-icon">{f.icon}</div>
                 <h3>{f.title[actualLang as keyof typeof f.title]}</h3>
                 <p>{f.desc[actualLang as keyof typeof f.desc]}</p>
@@ -156,7 +172,7 @@ export default function HomePage({ lang }: { lang?: string }) {
 
       {/* Login CTA for non-authenticated */}
       {!isLoggedIn && (
-        <section style={{ maxWidth: 720, margin: "0 auto", padding: "48px 24px" }}>
+        <section style={{ maxWidth: 720, margin: "0 auto", padding: "48px 28px" }}>
           <div className="login-cta">
             <p>
               {actualLang === "en"

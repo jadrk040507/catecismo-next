@@ -1,7 +1,9 @@
 import { getSupabase } from "@/lib/supabase";
 
-function supabase() {
-  return getSupabase();
+function requireSupabase() {
+  const client = getSupabase();
+  if (!client) throw new Error("No supabase configured");
+  return client;
 }
 
 
@@ -62,8 +64,8 @@ export interface ChildProgress {
 export async function getChildProfiles(
   parentId: string
 ): Promise<ChildProfile[]> {
-  
-  const { data, error } = await supabase()
+  const sb = requireSupabase();
+  const { data, error } = await sb
     .from("child_profiles")
     .select("*")
     .eq("parent_id", parentId)
@@ -74,7 +76,7 @@ export async function getChildProfiles(
 
   // Enrich with class count
   for (const child of children) {
-    const { count } = await supabase()
+    const { count } = await sb
       .from("class_students")
       .select("*", { count: "exact", head: true })
       .eq("child_profile_id", child.id);
@@ -92,8 +94,8 @@ export async function addChildProfile(
     sacramental_status?: Record<string, unknown>;
   }
 ): Promise<ChildProfile> {
-  
-  const { data, error } = await (supabase().from("child_profiles") as any)
+  const sb = requireSupabase();
+  const { data, error } = await (sb.from("child_profiles") as any)
     .insert({
       parent_id: parentId,
       full_name: input.full_name.trim(),
@@ -111,8 +113,8 @@ export async function updateChildProfile(
   childId: string,
   input: Partial<ChildProfile>
 ): Promise<ChildProfile> {
-  
-  const { data, error } = await (supabase().from("child_profiles") as any)
+  const sb = requireSupabase();
+  const { data, error } = await (sb.from("child_profiles") as any)
     .update(input)
     .eq("id", childId)
     .select()
@@ -123,8 +125,8 @@ export async function updateChildProfile(
 }
 
 export async function deleteChildProfile(childId: string): Promise<void> {
-  
-  const { error } = await supabase()
+  const sb = requireSupabase();
+  const { error } = await sb
     .from("child_profiles")
     .delete()
     .eq("id", childId);
@@ -135,9 +137,9 @@ export async function deleteChildProfile(childId: string): Promise<void> {
 export async function getChildProgress(
   childId: string
 ): Promise<ChildProgress> {
-  
+  const sb = requireSupabase();
   // Get progress entries for this child via class_students
-  const { data: enrollments } = await supabase()
+  await sb
     .from("class_students")
     .select("student_id")
     .eq("child_profile_id", childId);
@@ -157,8 +159,8 @@ export async function getChildProgress(
 // ─── Documents ──────────────────────────────────────────────────────────────
 
 export async function getDocuments(childId: string): Promise<ChildDocument[]> {
-  
-  const { data, error } = await supabase()
+  const sb = requireSupabase();
+  const { data, error } = await sb
     .from("documents")
     .select("*")
     .eq("child_id", childId)
@@ -176,8 +178,8 @@ export async function addDocument(input: {
   signed_at?: string;
   expires_at?: string;
 }): Promise<ChildDocument> {
-  
-  const { data, error } = await (supabase().from("documents") as any)
+  const sb = requireSupabase();
+  const { data, error } = await (sb.from("documents") as any)
     .insert(input)
     .select()
     .single();
@@ -192,11 +194,11 @@ export async function linkChildToClass(
   childId: string,
   classId: number
 ): Promise<void> {
-  
+  const sb = requireSupabase();
   // For now, linking a child profile to a class requires that the parent be
   // a student in that class. We insert with child_profile_id set.
   // In the future, we can support children attending independently.
-  const { error } = await (supabase().from("class_students") as any).insert({
+  const { error } = await (sb.from("class_students") as any).insert({
     class_id: classId,
     child_profile_id: childId,
     joined_at: new Date().toISOString(),

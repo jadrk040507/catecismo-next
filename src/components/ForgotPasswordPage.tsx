@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabase } from "@/lib/supabase";
 
 export default function ForgotPasswordPage({ lang = "es" }: { lang?: "es" | "en" }) {
   const pathname = usePathname();
@@ -17,7 +17,8 @@ export default function ForgotPasswordPage({ lang = "es" }: { lang?: "es" | "en"
     if (!email.trim()) { setError(isEn ? "Enter your email" : "Ingresa tu correo"); return; }
     setLoading(true); setError("");
     try {
-      const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL || "", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "");
+      const supabase = getSupabase();
+      if (!supabase) { setError(isEn ? "Configuration error" : "Error de configuración"); setLoading(false); return; }
       const redirectTo = `${window.location.origin}${isEn ? "/en" : ""}/update-password`;
       const { error: err } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
       if (err) throw err;

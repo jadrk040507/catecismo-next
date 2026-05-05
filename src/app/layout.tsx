@@ -1,16 +1,24 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/lib/auth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MagisteriumChat from "@/components/MagisteriumChat";
 import "./globals.css";
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
   title: {
     default: "Proyecto Catecismo",
     template: "%s — Proyecto Catecismo",
   },
-  description: "Un catecismo vivo, accesible y gratuito. Catequesis católica gratuita, clara y profunda para todas las edades.",
+  description:
+    "Un catecismo vivo, accesible y gratuito. Catequesis católica gratuita, clara y profunda para todas las edades.",
   keywords: ["catecismo", "iglesia católica", "catequesis", "fe", "sacramentos", "oración"],
   openGraph: {
     type: "website",
@@ -29,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <body className="font-sans min-h-screen flex flex-col bg-neutral text-primary">
         <AuthProvider>
           <Header />
@@ -37,6 +45,7 @@ export default function RootLayout({
           <Footer />
           <MagisteriumChat />
         </AuthProvider>
+        <script dangerouslySetInnerHTML={{ __html: `document.documentElement.lang = location.pathname.startsWith('/en') ? 'en' : 'es';` }} />
       </body>
     </html>
   );

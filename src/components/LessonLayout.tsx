@@ -11,7 +11,9 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
+import { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { getSupabase } from "@/lib/supabase";
 import ReadAloud from "./ReadAloud";
 import { cn } from "@/lib/utils";
 
@@ -73,15 +75,41 @@ export default function LessonLayout({
   children,
 }: LessonLayoutProps) {
   const pathname = usePathname();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const isEn = pathname.startsWith("/en");
   const lang = isEn ? "en" : "es";
+  const [completed, setCompleted] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   /* ── Route parsing ── */
   const parts = pathname.split("/").filter(Boolean);
   const langPrefix = parts[0] === "en" ? "en" : "es";
   const section = parts[1] || "credo";
   const rawSlug = parts[2] || "";
+
+  /* ── Mark as completed handler ── */
+  async function handleMarkComplete() {
+    if (completed || saving) return;
+    setSaving(true);
+    try {
+      const supabase = getSupabase();
+      if (supabase && user?.id) {
+        await supabase.from("lesson_progress").upsert({
+          user_id: user.id,
+          lesson_slug: rawSlug,
+          section,
+          completed: true,
+          completed_at: new Date().toISOString(),
+        }, { onConflict: "user_id,lesson_slug" });
+      }
+      setCompleted(true);
+    } catch {
+      // Even if API fails, still mark locally for UX
+      setCompleted(true);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   const baseSlug = rawSlug.replace(/-(workbook|guide)$/, "");
   const isWorkbook = rawSlug.endsWith("-workbook");
@@ -132,6 +160,7 @@ export default function LessonLayout({
 
       {/* ── Lesson Header ── */}
       <header className="lesson-header animate-fade-up">
+        <div className="tag">{sectionLabel}</div>
         <h1>{title}</h1>
 
         {/* Metadata badges */}
@@ -196,9 +225,18 @@ export default function LessonLayout({
 
       {/* ── Mark as completed ── */}
       <div className="lesson-progress animate-fade-up">
-        <button className="lp-btn" aria-label={isEn ? "Mark as completed" : "Marcar como completada"}>
+        <button
+          className={cn("lp-btn", completed && "lp-btn--completed")}
+          onClick={handleMarkComplete}
+          disabled={completed || saving}
+          aria-label={isEn ? "Mark as completed" : "Marcar como completada"}
+        >
           <CheckCircle2 size={15} aria-hidden="true" />
-          {isEn ? "Mark as completed" : "Marcar como completada"}
+          {completed
+            ? (isEn ? "Completed ✓" : "Completada ✓")
+            : saving
+              ? "…"
+              : (isEn ? "Mark as completed" : "Marcar como completada")}
         </button>
         <span className="lp-time">~5 min</span>
       </div>

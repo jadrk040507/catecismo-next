@@ -71,6 +71,7 @@ export default function CatechistDashboard({
   const [editingClass, setEditingClass] = useState<AugmentedClass | null>(null);
 
   // ─── Delete danger zone ──────────────────────────────────────────────
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -83,6 +84,7 @@ export default function CatechistDashboard({
 
   // ─── Load data ───────────────────────────────────────────────────────
   const loadData = useCallback(async () => {
+    if (!supabase) return;
     setLoading(true);
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -250,6 +252,9 @@ export default function CatechistDashboard({
       // Contraseña válida — eliminar la clase
       await deleteClass(editingClass.id);
       setShowEditModal(false);
+      setShowDeleteConfirm(false);
+      setDeletePassword("");
+      setDeleteError("");
       showToast(isEn ? "Class deleted." : "Clase eliminada.");
       await loadData();
     } catch (e: any) {
@@ -320,6 +325,18 @@ export default function CatechistDashboard({
         confirmDelete: { es: "Eliminar clase", en: "Delete class" },
       }) as Record<string, { es: string; en: string }>
     )[key]?.[isEn ? "en" : "es"] || key;
+
+  // ─── Supabase null guard ─────────────────────────────────────────────
+  if (!supabase) {
+    return (
+      <div className="db-content">
+        <h1>{t("myClasses")}</h1>
+        <p className="db-subtitle" style={{ color: "var(--color-secondary)" }}>
+          {isEn ? "Configuration error. Please check your settings." : "Error de configuración. Verificá tus ajustes."}
+        </p>
+      </div>
+    );
+  }
 
   // ─── Loading state ───────────────────────────────────────────────────
   if (loading) {
@@ -445,7 +462,8 @@ export default function CatechistDashboard({
                       className="db-btn sm ghost danger"
                       onClick={(e) => {
                         e.stopPropagation();
-                        openEditModal(cls);
+                        setEditingClass(cls);
+                        setShowDeleteConfirm(true);
                       }}
                       aria-label={t("delete")}
                     >
@@ -534,7 +552,7 @@ export default function CatechistDashboard({
       {showEditModal && editingClass && (
         <div
           className="db-overlay"
-          onClick={() => setShowEditModal(false)}
+          onClick={() => { setShowEditModal(false); setDeletePassword(""); setDeleteError(""); }}
           role="dialog"
           aria-modal="true"
           aria-label={t("editTitle")}
@@ -626,6 +644,57 @@ export default function CatechistDashboard({
                 onClick={handleDelete}
                 disabled={deleting || !deletePassword}
                 aria-label={t("confirmDelete")}
+              >
+                {deleting ? "…" : t("confirmDelete")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════
+         DELETE CONFIRMATION MODAL
+         ═══════════════════════════════════════════════════════════════ */}
+      {showDeleteConfirm && editingClass && (
+        <div
+          className="db-overlay"
+          onClick={() => { setShowDeleteConfirm(false); setDeletePassword(""); setDeleteError(""); }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("confirmDelete")}
+        >
+          <div className="db-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>{t("confirmDelete")}</h2>
+            <p style={{ fontSize: 14, color: "var(--color-secondary)", lineHeight: 1.6, marginTop: 8 }}>
+              {t("deleteWarning")}
+            </p>
+
+            {deleteError && (
+              <div className="db-msg bad" role="alert">{deleteError}</div>
+            )}
+
+            <label htmlFor="del-pw">{t("passwordLabel")}</label>
+            <input
+              id="del-pw"
+              type="password"
+              value={deletePassword}
+              onChange={(e) => setDeletePassword(e.target.value)}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              autoFocus
+            />
+            <div className="db-modal-actions">
+              <button
+                type="button"
+                className="db-btn"
+                onClick={() => { setShowDeleteConfirm(false); setDeletePassword(""); setDeleteError(""); }}
+              >
+                {t("cancel")}
+              </button>
+              <button
+                className="db-btn danger"
+                onClick={handleDelete}
+                disabled={deleting || !deletePassword}
               >
                 {deleting ? "…" : t("confirmDelete")}
               </button>

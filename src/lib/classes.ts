@@ -105,10 +105,12 @@ export interface UpdateAssignmentInput {
   sort_order?: number;
 }
 
-// ─── Singleton helper ────────────────────────────────────────────────────────
+// ─── Singleton helper with null check ────────────────────────────────────────
 
-function supabase() {
-  return getSupabase();
+function requireSupabase() {
+  const client = getSupabase();
+  if (!client) throw new Error("No supabase configured");
+  return client;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -130,12 +132,13 @@ async function getCurrentProfile(): Promise<{
   full_name: string;
   email: string;
 } | null> {
+  const sb = requireSupabase();
   const {
     data: { user },
-  } = await supabase().auth.getUser();
+  } = await sb.auth.getUser();
   if (!user) return null;
 
-  const { data } = await supabase()
+  const { data } = await sb
     .from("profiles")
     .select("id, role, full_name, email")
     .eq("id", user.id)
@@ -155,12 +158,13 @@ async function getCurrentProfile(): Promise<{
  * - estudiante: ve las clases donde está inscrito
  */
 export async function getClasses(): Promise<Clase[]> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
   // super_admin ve todas
   if (profile.role === "super_admin") {
-    const { data } = await supabase()
+    const { data } = await sb
       .from("classes")
       .select("*")
       .neq("status", "deleted")
@@ -171,14 +175,14 @@ export async function getClasses(): Promise<Clase[]> {
   // catechist / admin / co-catechist: ve las propias + donde es co-catechist
   if (["catechist", "admin", "super_admin"].includes(profile.role)) {
     // Query 1: clases donde es owner
-    const { data: owned } = await supabase()
+    const { data: owned } = await sb
       .from("classes")
       .select("*")
       .eq("catechist_id", profile.id)
       .neq("status", "deleted");
 
     // Query 2: clases donde es co-catechist (vía class_catechists)
-    const { data: coClassRows } = await supabase()
+    const { data: coClassRows } = await sb
       .from("class_catechists")
       .select("class_id")
       .eq("catechist_id", profile.id);
@@ -187,7 +191,7 @@ export async function getClasses(): Promise<Clase[]> {
 
     let coClasses: Clase[] = [];
     if (coClassIds.length > 0) {
-      const { data: coData } = await supabase()
+      const { data: coData } = await sb
         .from("classes")
         .select("*")
         .in("id", coClassIds)
@@ -210,7 +214,7 @@ export async function getClasses(): Promise<Clase[]> {
   }
 
   // estudiante: ve las clases donde está inscrito
-  const { data: studentRows } = await supabase()
+  const { data: studentRows } = await sb
     .from("class_students")
     .select("class_id")
     .eq("student_id", profile.id);
@@ -218,7 +222,7 @@ export async function getClasses(): Promise<Clase[]> {
   const classIds = (studentRows || []).map((r: any) => r.class_id);
   if (classIds.length === 0) return [];
 
-  const { data } = await supabase()
+  const { data } = await sb
     .from("classes")
     .select("*")
     .in("id", classIds)
@@ -238,8 +242,9 @@ export async function getClassById(classId: number): Promise<{
   students: ClassStudent[];
   course: any;
 }> {
+  const sb = requireSupabase();
   // Obtener la clase
-  const { data: classData } = await supabase()
+  const { data: classData } = await sb
     .from("classes")
     .select("*")
     .eq("id", classId)
@@ -251,7 +256,7 @@ export async function getClassById(classId: number): Promise<{
   }
 
   // Obtener catequista owner
-  const { data: catechistData } = await supabase()
+  const { data: catechistData } = await sb
     .from("profiles")
     .select("*")
     .eq("id", clase.catechist_id)
@@ -263,7 +268,7 @@ export async function getClassById(classId: number): Promise<{
   // Obtener curso si tiene course_id
   let course = null;
   if (clase.course_id) {
-    const { data: courseData } = await supabase()
+    const { data: courseData } = await sb
       .from("courses")
       .select("*")
       .eq("id", clase.course_id)
@@ -285,6 +290,7 @@ export async function getClassById(classId: number): Promise<{
  * generación de código de invitación de 6 caracteres.
  */
 export async function createClass(input: CreateClassInput): Promise<Clase> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
   if (!["catechist", "admin", "super_admin"].includes(profile.role)) {
@@ -292,7 +298,7 @@ export async function createClass(input: CreateClassInput): Promise<Clase> {
   }
 
   // Verificar unicidad de nombre para este catequista
-  const { data: existing } = await supabase()
+  const { data: existing } = await sb
     .from("classes")
     .select("id")
     .eq("catechist_id", profile.id)
@@ -307,7 +313,7 @@ export async function createClass(input: CreateClassInput): Promise<Clase> {
   let inviteCode = generateInviteCode();
   let attempts = 0;
   while (attempts < 10) {
-    const { data: codeCheck } = await supabase()
+    const { data: codeCheck } = await sb
       .from("classes")
       .select("id")
       .eq("invite_code", inviteCode)
@@ -317,7 +323,7 @@ export async function createClass(input: CreateClassInput): Promise<Clase> {
     attempts++;
   }
 
-  const { data, error } = await (supabase().from("classes") as any)
+  const { data, error } = await (sb.from("classes") as any)
     .insert({
       name: input.name,
       description: input.description || null,
@@ -341,11 +347,12 @@ export async function updateClass(
   classId: number,
   input: UpdateClassInput
 ): Promise<Clase> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
   // Verificar propiedad
-  const { data: clase } = await (supabase().from("classes") as any)
+  const { data: clase } = await (sb.from("classes") as any)
     .select("catechist_id")
     .eq("id", classId)
     .single();
@@ -355,7 +362,7 @@ export async function updateClass(
     throw new Error("No tienes permisos para editar esta clase");
   }
 
-  const { data, error } = await (supabase().from("classes") as any)
+  const { data, error } = await (sb.from("classes") as any)
     .update(input)
     .eq("id", classId)
     .select()
@@ -369,11 +376,12 @@ export async function updateClass(
  * Soft-delete: cambia el status a "deleted" en lugar de eliminar el registro.
  */
 export async function deleteClass(classId: number): Promise<void> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
   // Verificar propiedad
-  const { data: clase } = await (supabase().from("classes") as any)
+  const { data: clase } = await (sb.from("classes") as any)
     .select("catechist_id")
     .eq("id", classId)
     .single();
@@ -383,7 +391,7 @@ export async function deleteClass(classId: number): Promise<void> {
     throw new Error("No tienes permisos para eliminar esta clase");
   }
 
-  const { error } = await (supabase().from("classes") as any)
+  const { error } = await (sb.from("classes") as any)
     .update({ status: "deleted" })
     .eq("id", classId);
 
@@ -401,8 +409,9 @@ export async function deleteClass(classId: number): Promise<void> {
 export async function getClassStudents(
   classId: number
 ): Promise<ClassStudent[]> {
+  const sb = requireSupabase();
   // Obtener registros de class_students
-  const { data: rows } = await supabase()
+  const { data: rows } = await sb
     .from("class_students")
     .select("*")
     .eq("class_id", classId);
@@ -412,7 +421,7 @@ export async function getClassStudents(
 
   // Obtener perfiles de los estudiantes
   const studentIds = studentRows.map((r: any) => r.student_id);
-  const { data: profiles } = await (supabase().from("profiles") as any)
+  const { data: profiles } = await (sb.from("profiles") as any)
     .select("id, email, full_name, lessons_completed, streak_days")
     .in("id", studentIds);
 
@@ -422,7 +431,7 @@ export async function getClassStudents(
   }
 
   // Obtener progreso (quiz scores) de la tabla progress
-  const { data: progress } = await (supabase().from("progress") as any)
+  const { data: progress } = await (sb.from("progress") as any)
     .select("user_id, quiz_score")
     .in("user_id", studentIds);
 
@@ -468,11 +477,12 @@ export async function addStudentToClass(
   classId: number,
   email: string
 ): Promise<{ student?: ClassStudent; invitation?: any }> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
   // Verificar que la clase existe y el usuario tiene permisos
-  const { data: clase } = await (supabase().from("classes") as any)
+  const { data: clase } = await (sb.from("classes") as any)
     .select("id, catechist_id")
     .eq("id", classId)
     .single();
@@ -483,7 +493,7 @@ export async function addStudentToClass(
   const isOwner = (clase as any).catechist_id === profile.id;
   let isCoCatechist = false;
   if (!isOwner) {
-    const { data: coCheck } = await (supabase().from("class_catechists") as any)
+    const { data: coCheck } = await (sb.from("class_catechists") as any)
       .select("catechist_id")
       .eq("class_id", classId)
       .eq("catechist_id", profile.id)
@@ -496,14 +506,14 @@ export async function addStudentToClass(
   }
 
   // Buscar perfil por email
-  const { data: studentProfile } = await (supabase().from("profiles") as any)
+  const { data: studentProfile } = await (sb.from("profiles") as any)
     .select("id, email, full_name")
     .eq("email", email.toLowerCase().trim())
     .maybeSingle();
 
   if (studentProfile) {
     // El estudiante existe: insertar directamente en class_students
-    const { data, error } = await (supabase().from("class_students") as any)
+    const { data, error } = await (sb.from("class_students") as any)
       .upsert(
         {
           class_id: classId,
@@ -540,7 +550,7 @@ export async function addStudentToClass(
   expiresAt.setDate(expiresAt.getDate() + 7); // Expira en 7 días
 
   const { data: invitation, error: invError } = await (
-    supabase().from("class_invitations") as any
+    sb.from("class_invitations") as any
   )
     .insert({
       class_id: classId,
@@ -565,11 +575,12 @@ export async function removeStudentFromClass(
   classId: number,
   studentId: string
 ): Promise<void> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
   // Verificar permisos (owner, co-catechist, o super_admin)
-  const { data: clase } = await (supabase().from("classes") as any)
+  const { data: clase } = await (sb.from("classes") as any)
     .select("catechist_id")
     .eq("id", classId)
     .single();
@@ -579,7 +590,7 @@ export async function removeStudentFromClass(
   const isOwner = (clase as any).catechist_id === profile.id;
   let isCoCatechist = false;
   if (!isOwner) {
-    const { data: coCheck } = await (supabase().from("class_catechists") as any)
+    const { data: coCheck } = await (sb.from("class_catechists") as any)
       .select("catechist_id")
       .eq("class_id", classId)
       .eq("catechist_id", profile.id)
@@ -591,7 +602,7 @@ export async function removeStudentFromClass(
     throw new Error("No tienes permisos para remover estudiantes de esta clase");
   }
 
-  const { error } = await (supabase().from("class_students") as any)
+  const { error } = await (sb.from("class_students") as any)
     .delete()
     .eq("class_id", classId)
     .eq("student_id", studentId);
@@ -605,11 +616,12 @@ export async function removeStudentFromClass(
 export async function joinClassByCode(
   inviteCode: string
 ): Promise<ClassStudent> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
   // Buscar clase por código de invitación
-  const { data: clase } = await (supabase().from("classes") as any)
+  const { data: clase } = await (sb.from("classes") as any)
     .select("*")
     .eq("invite_code", inviteCode.toUpperCase().trim())
     .neq("status", "deleted")
@@ -618,7 +630,7 @@ export async function joinClassByCode(
   if (!clase) throw new Error("Código de invitación inválido o clase no encontrada");
 
   // Verificar que no esté ya en la clase
-  const { data: existing } = await (supabase().from("class_students") as any)
+  const { data: existing } = await (sb.from("class_students") as any)
     .select("id")
     .eq("class_id", (clase as any).id)
     .eq("student_id", profile.id)
@@ -627,7 +639,7 @@ export async function joinClassByCode(
   if (existing) throw new Error("Ya estás en esta clase");
 
   // Insertar en class_students
-  const { data, error } = await (supabase().from("class_students") as any)
+  const { data, error } = await (sb.from("class_students") as any)
     .insert({
       class_id: (clase as any).id,
       student_id: profile.id,
@@ -653,7 +665,8 @@ export async function joinClassByCode(
  * Obtiene todos los perfiles con rol de catechist, admin o super_admin.
  */
 export async function getCatechists(): Promise<CatechistProfile[]> {
-  const { data } = await supabase()
+  const sb = requireSupabase();
+  const { data } = await sb
     .from("profiles")
     .select("*")
     .in("role", ["catechist", "admin", "super_admin"])
@@ -673,8 +686,9 @@ export async function getCatechists(): Promise<CatechistProfile[]> {
 export async function getClassCatechists(
   classId: number
 ): Promise<ClassCatechist[]> {
+  const sb = requireSupabase();
   // Query 1: relaciones de la tabla class_catechists
-  const { data: relations } = await supabase()
+  const { data: relations } = await sb
     .from("class_catechists")
     .select("*")
     .eq("class_id", classId);
@@ -684,7 +698,7 @@ export async function getClassCatechists(
 
   // Query 2: perfiles de esos catequistas
   const catechistIds = relationRows.map((r: any) => r.catechist_id);
-  const { data: profiles } = await (supabase().from("profiles") as any)
+  const { data: profiles } = await (sb.from("profiles") as any)
     .select("id, email, full_name, role")
     .in("id", catechistIds);
 
@@ -713,11 +727,12 @@ export async function addCatechistToClass(
   classId: number,
   catechistId: string
 ): Promise<ClassCatechist> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
   // Solo el owner o super_admin pueden agregar catequistas
-  const { data: clase } = await (supabase().from("classes") as any)
+  const { data: clase } = await (sb.from("classes") as any)
     .select("catechist_id")
     .eq("id", classId)
     .single();
@@ -727,7 +742,7 @@ export async function addCatechistToClass(
     throw new Error("No tienes permisos para agregar catequistas a esta clase");
   }
 
-  const { data, error } = await (supabase().from("class_catechists") as any)
+  const { data, error } = await (sb.from("class_catechists") as any)
     .insert({
       class_id: classId,
       catechist_id: catechistId,
@@ -745,7 +760,7 @@ export async function addCatechistToClass(
   }
 
   // Obtener datos del perfil para enriquecer
-  const { data: catechistProfile } = await (supabase().from("profiles") as any)
+  const { data: catechistProfile } = await (sb.from("profiles") as any)
     .select("full_name, email, role")
     .eq("id", catechistId)
     .single();
@@ -765,11 +780,12 @@ export async function removeCatechistFromClass(
   classId: number,
   catechistId: string
 ): Promise<void> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
   // Solo el owner o super_admin pueden remover
-  const { data: clase } = await (supabase().from("classes") as any)
+  const { data: clase } = await (sb.from("classes") as any)
     .select("catechist_id")
     .eq("id", classId)
     .single();
@@ -779,7 +795,7 @@ export async function removeCatechistFromClass(
     throw new Error("No tienes permisos para remover catequistas de esta clase");
   }
 
-  const { error } = await (supabase().from("class_catechists") as any)
+  const { error } = await (sb.from("class_catechists") as any)
     .delete()
     .eq("class_id", classId)
     .eq("catechist_id", catechistId);
@@ -797,7 +813,8 @@ export async function removeCatechistFromClass(
 export async function getClassAssignments(
   classId: number
 ): Promise<ClassAssignment[]> {
-  const { data } = await supabase()
+  const sb = requireSupabase();
+  const { data } = await sb
     .from("class_assignments")
     .select("*")
     .eq("class_id", classId)
@@ -812,10 +829,11 @@ export async function getClassAssignments(
 export async function addAssignment(
   input: CreateAssignmentInput
 ): Promise<ClassAssignment> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
-  const { data, error } = await (supabase().from("class_assignments") as any)
+  const { data, error } = await (sb.from("class_assignments") as any)
     .insert({
       class_id: input.class_id,
       lesson_slug: input.lesson_slug,
@@ -845,10 +863,11 @@ export async function updateAssignment(
   assignmentId: number,
   input: UpdateAssignmentInput
 ): Promise<ClassAssignment> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
-  const { data, error } = await (supabase().from("class_assignments") as any)
+  const { data, error } = await (sb.from("class_assignments") as any)
     .update(input)
     .eq("id", assignmentId)
     .select()
@@ -862,10 +881,11 @@ export async function updateAssignment(
  * Elimina una asignación (hard delete del registro).
  */
 export async function removeAssignment(assignmentId: number): Promise<void> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
-  const { error } = await supabase()
+  const { error } = await sb
     .from("class_assignments")
     .delete()
     .eq("id", assignmentId);
@@ -891,7 +911,8 @@ export interface ClassAnnouncement {
 export async function getClassAnnouncements(
   classId: number
 ): Promise<ClassAnnouncement[]> {
-  const { data: rows, error } = await supabase()
+  const sb = requireSupabase();
+  const { data: rows, error } = await sb
     .from("class_announcements")
     .select("*")
     .eq("class_id", classId)
@@ -904,7 +925,7 @@ export async function getClassAnnouncements(
 
   if (announcements.length > 0) {
     const authorIds = [...new Set(announcements.map((a) => a.author_id))];
-    const { data: profiles } = await (supabase()
+    const { data: profiles } = await (sb
       .from("profiles") as any)
       .select("id, full_name, email")
       .in("id", authorIds);
@@ -926,10 +947,11 @@ export async function addAnnouncement(
   classId: number,
   content: string
 ): Promise<ClassAnnouncement> {
+  const sb = requireSupabase();
   const profile = await getCurrentProfile();
   if (!profile) throw new Error("No autenticado");
 
-  const { data, error } = await (supabase()
+  const { data, error } = await (sb
     .from("class_announcements") as any)
     .insert({
       class_id: classId,
@@ -950,7 +972,8 @@ export async function addAnnouncement(
 }
 
 export async function deleteAnnouncement(announcementId: string): Promise<void> {
-  const { error } = await supabase()
+  const sb = requireSupabase();
+  const { error } = await sb
     .from("class_announcements")
     .delete()
     .eq("id", announcementId);
@@ -962,7 +985,8 @@ export async function togglePinAnnouncement(
   announcementId: string,
   pinned: boolean
 ): Promise<void> {
-  const { error } = await (getSupabase() as any)
+  const sb = requireSupabase();
+  const { error } = await (sb as any)
     .from("class_announcements")
     .update({ pinned })
     .eq("id", announcementId);
@@ -987,6 +1011,7 @@ export async function getGradebook(classId: number): Promise<{
   assignments: ClassAssignment[];
   grades: Record<string, Record<number, { completed: boolean; score: number | null }>>;
 }> {
+  const sb = requireSupabase();
   const [students, assignments] = await Promise.all([
     getClassStudents(classId),
     getClassAssignments(classId),
@@ -996,7 +1021,7 @@ export async function getGradebook(classId: number): Promise<{
 
   if (students.length > 0) {
     const studentIds = students.map((s) => s.student_id);
-    const { data: progressRows } = await (supabase()
+    const { data: progressRows } = await (sb
       .from("progress") as any)
       .select("user_id, lesson_slug, quiz_score, completed")
       .in("user_id", studentIds);

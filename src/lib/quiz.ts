@@ -401,6 +401,7 @@ export async function submitQuizScore(
   total: number
 ): Promise<void> {
   const supabase = getSupabase();
+  if (!supabase) return;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 

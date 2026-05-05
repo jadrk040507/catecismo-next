@@ -28,13 +28,8 @@ export default function SectionIndex({ section, topics }: SectionIndexProps) {
   const meta = sectionMeta[section];
   const nav = sectionNav[section];
 
-  // Language toggle URLs
-  const toggleUrl = isEn
-    ? `/es/${section === "sacramentos" ? "sacramentos" : section === "oracion" ? "oracion" : section}`
-    : `/en/${section === "sacramentos" ? "sacraments" : section === "oracion" ? "prayer" : section}`;
-
   return (
-    <div className="section-page">
+    <div className="section-page animate-fade-up">
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <Link href={isEn ? "/en" : "/"}>{isEn ? "Home" : "Inicio"}</Link>
@@ -42,14 +37,17 @@ export default function SectionIndex({ section, topics }: SectionIndexProps) {
         <span className="current">{meta.title[lang]}</span>
         <div style={{ marginLeft: "auto" }}>
           <div className="lang-switcher">
-            <Link href={isEn ? `/es/${section}` : `/en/${section === "sacramentos" ? "sacraments" : section === "oracion" ? "prayer" : section}`} className={!isEn ? "active" : ""}>ES</Link>
-            <Link href={isEn ? `/en/${section === "sacramentos" ? "sacraments" : section === "oracion" ? "prayer" : section}` : `/en/${section}`} className={isEn ? "active" : ""}>EN</Link>
+            <Link href={isEn ? `/es/${section === "sacramentos" ? "sacramentos" : section === "oracion" ? "oracion" : section}` : `/es/${section}`} className={!isEn ? "active" : ""}>ES</Link>
+            <Link href={isEn ? `/en/${section === "sacramentos" ? "sacraments" : section === "oracion" ? "prayer" : section}` : `/en/${section === "sacramentos" ? "sacraments" : section === "oracion" ? "prayer" : section}`} className={isEn ? "active" : ""}>EN</Link>
           </div>
         </div>
       </div>
 
       {/* Section header */}
       <div className="section-header">
+        <div className="tag">
+          {lang === "en" ? "Section" : "Sección"}
+        </div>
         <div className="section-header-icon">{meta.icon}</div>
         <h1>{meta.title[lang]}</h1>
         <p>{meta.desc[lang]}</p>
@@ -79,7 +77,7 @@ export default function SectionIndex({ section, topics }: SectionIndexProps) {
               <div className="topic-row-cic">{topic.cic}</div>
             </div>
             <div className="topic-row-meta">
-              <span>🔊</span>
+              <span style={{ fontSize: "1rem" }}>🔊</span>
               <span>~5 min</span>
             </div>
             <span className="topic-row-arrow">→</span>
@@ -88,11 +86,11 @@ export default function SectionIndex({ section, topics }: SectionIndexProps) {
       </div>
 
       {/* Section navigation */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 48, paddingTop: 24, borderTop: "1px solid var(--color-border-light)" }}>
-        <Link href={isEn ? nav.prev.enHref : nav.prev.href} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.875rem", fontWeight: 500, color: "var(--color-secondary)", textDecoration: "none" }}>
+      <div className="lesson-nav">
+        <Link href={isEn ? nav.prev.enHref : nav.prev.href}>
           ← {nav.prev.label[lang]}
         </Link>
-        <Link href={isEn ? nav.next.enHref : nav.next.href} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.875rem", fontWeight: 500, color: "var(--color-secondary)", textDecoration: "none" }}>
+        <Link href={isEn ? nav.next.enHref : nav.next.href}>
           {nav.next.label[lang]} →
         </Link>
       </div>
