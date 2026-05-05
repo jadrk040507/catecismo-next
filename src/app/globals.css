@@ -286,6 +286,12 @@ body::after {
 }
 @media (max-width: 480px) {
   .topic-grid { gap: 10px; padding: 0 20px; }
+  .topic-row { flex-wrap: wrap; gap: 8px; padding: 14px 16px; }
+  .topic-row-meta { width: 100%; gap: 8px; margin-top: 4px; }
+  .topic-row-num { width: 28px; height: 28px; font-size: 0.75rem; }
+  .quiz-question { font-size: 1rem; }
+  body { line-height: 1.75; }
+  .prose p { line-height: 1.85; }
 }
 
 .topic-card {
@@ -586,7 +592,7 @@ body::after {
   -webkit-overflow-scrolling: touch;
 }
 .lesson-tab {
-  padding: 10px 16px;
+  padding: 12px 16px;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-secondary);
@@ -600,6 +606,7 @@ body::after {
   gap: 6px;
   transition: color 0.15s;
   white-space: nowrap;
+  min-height: 44px;
 }
 .lesson-tab:hover {
   color: var(--color-primary);
@@ -703,7 +710,7 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 10px 12px;
   font-family: var(--font-sans);
   font-size: 0.8125rem;
   font-weight: 500;
@@ -729,8 +736,8 @@ body::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   font-size: 0.75rem;
   background: transparent;
   border: 1px solid var(--color-border);
@@ -769,7 +776,7 @@ body::after {
 }
 .quiz-options { display: flex; flex-direction: column; gap: 8px; }
 .quiz-option {
-  padding: 12px 16px;
+  padding: 14px 16px;
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-md);
   font-size: 0.9375rem;
@@ -1104,8 +1111,8 @@ body::after {
    ============================================== */
 .magisterium-fab {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  right: calc(24px + env(safe-area-inset-right));
   z-index: 9998;
   display: flex;
   align-items: center;
@@ -1130,7 +1137,7 @@ body::after {
 .magisterium-fab:active { transform: translateY(0); }
 .magisterium-fab-label { display: inline; }
 @media (max-width: 480px) {
-  .magisterium-fab { padding: 14px; gap: 0; bottom: 80px; }
+  .magisterium-fab { padding: 14px; gap: 0; bottom: calc(76px + env(safe-area-inset-bottom)); right: calc(16px + env(safe-area-inset-right)); }
   .magisterium-fab-label { display: none; }
 }
 .magisterium-overlay {
@@ -1182,7 +1189,7 @@ body::after {
 .magisterium-panel-header-text p { margin: 2px 0 0; font-size: 12px; color: var(--color-secondary); }
 .magisterium-close-btn {
   display: flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border: none; background: transparent;
+  width: 44px; height: 44px; border: none; background: transparent;
   border-radius: var(--radius-sm); color: var(--color-secondary);
   cursor: pointer; transition: background 0.15s, color 0.15s;
 }
@@ -1250,6 +1257,51 @@ html.dashboard-route .site-footer {
 .site-footer {
   border-top: 1px solid var(--color-border-light);
   margin-top: auto;
+}
+
+/* === Mobile Touch Target Enforcement (≤768px) === */
+@media (max-width: 768px) {
+  .btn,
+  .db-btn {
+    min-height: 44px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .btn-sm,
+  .db-btn.sm {
+    min-height: 36px;
+    padding: 8px 14px;
+  }
+  .btn-sm:where(.danger, .primary),
+  .db-btn.sm:where(.danger, .primary) {
+    min-height: 44px;
+  }
+  .db-subtab {
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+  .magisterium-panel {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* === Safe Area Insets for public site elements === */
+@supports (padding: max(0px)) {
+  .site-header {
+    padding-top: env(safe-area-inset-top);
+    padding-left: calc(28px + env(safe-area-inset-left));
+    padding-right: calc(28px + env(safe-area-inset-right));
+  }
+  .section-page {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+}
+
+/* === Body scroll lock for overlays === */
+html.no-scroll,
+html.no-scroll body {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 /* === Print Styles === */

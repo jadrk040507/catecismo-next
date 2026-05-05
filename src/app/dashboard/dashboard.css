@@ -120,7 +120,7 @@
   position: sticky; top: 0; z-index: 20;
   display: flex; align-items: center;
   height: 48px; padding: 0 24px;
-  padding-top: calc(0px + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
   padding-left: calc(24px + env(safe-area-inset-left));
   padding-right: calc(24px + env(safe-area-inset-right));
   background: rgba(247,246,243,0.86);
@@ -148,7 +148,8 @@
 
 /* ─── HEADINGS ─── */
 .db-content h1 {
-  font-size: 24px; font-weight: 700; letter-spacing: -0.5px;
+  font-size: clamp(1.25rem, 5vw, 1.5rem);
+  font-weight: 700; letter-spacing: -0.5px;
   color: var(--color-primary); margin-bottom: 4px;
 }
 .db-content h2 {
@@ -180,7 +181,8 @@
 .db-stat-item:hover { border-color: var(--color-border); }
 
 .db-stat-val {
-  font-size: 26px; font-weight: 700; color: var(--color-primary);
+  font-size: clamp(1.25rem, 5vw, 1.625rem);
+  font-weight: 700; color: var(--color-primary);
   letter-spacing: -0.5px; line-height: 1.2;
 }
 .db-stat-lbl {
@@ -527,10 +529,12 @@ html.dashboard-route body {
 
 /* ─── MOBILE (≤768px) ─── */
 @media (max-width: 768px) {
-  .db-sidebar { transform: translateX(-100%); }
+  .db-sidebar { transform: translateX(-100%); width: min(280px, 80vw); }
   .db-sidebar.open {
     transform: translateX(0);
     box-shadow: 8px 0 32px rgba(0,0,0,0.12);
+    padding-top: calc(16px + env(safe-area-inset-top));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
   }
   .db-sidebar-overlay { display: block; }
   .db-sidebar-overlay.open { display: block; }
@@ -544,15 +548,28 @@ html.dashboard-route body {
   /* Cards grid single column on mobile */
   .db-cards { grid-template-columns: 1fr; }
   .db-modal { padding: 20px 18px; }
+  /* Bottom sheet safe area */
+  .db-modal {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    padding-left: calc(18px + env(safe-area-inset-left));
+    padding-right: calc(18px + env(safe-area-inset-right));
+  }
 }
 
 /* ─── iPhone SE (≤380px) extra tight layout ─── */
 @media (max-width: 380px) {
   .db-stat-row { grid-template-columns: 1fr 1fr; gap: 6px; }
-  .db-content { padding: 16px 12px calc(40px + env(safe-area-inset-bottom)); }
+  .db-stat-item { padding: 14px 16px; }
+  .db-stat-val { font-size: 22px; }
+  .db-content { padding: 16px 12px calc(48px + env(safe-area-inset-bottom)); }
   .db-content h1 { font-size: 1.25rem; }
-  .db-btn { font-size: 12px; padding: 7px 12px; }
-  .db-btn.sm { font-size: 11px; padding: 5px 8px; }
+  .db-btn { font-size: 12px; padding: 10px 12px; }
+  .db-btn.sm { font-size: 11px; padding: 8px 10px; }
+  /* Stack action buttons vertically */
+  .db-table td .db-btn-group {
+    flex-direction: column; gap: 4px;
+  }
+  .db-table td .db-btn-group .db-btn { width: 100%; justify-content: center; }
 }
 
 /* ─── TABLES → CARDS ON MOBILE (≤640px) ─── */
@@ -587,6 +604,7 @@ html.dashboard-route body {
     border-radius: 12px 12px 0 0;
     padding: 20px 18px calc(24px + env(safe-area-inset-bottom));
     max-height: 80vh;
+    overscroll-behavior: contain;
   }
   /* Drag handle affordance */
   .db-modal::before {
@@ -597,5 +615,30 @@ html.dashboard-route body {
     border-radius: 2px;
     background: var(--color-border);
     margin: 0 auto 16px;
+  }
+}
+
+/* ─── TABLE CELL MOBILE: label max-width ─── */
+@media (max-width: 640px) {
+  .db-table td::before {
+    max-width: 40%;
+  }
+}
+
+/* ─── LANDSCAPE PHONE ─── */
+@media (max-height: 500px) and (orientation: landscape) {
+  .db-sidebar {
+    width: 240px;
+    max-height: 100vh;
+    padding-top: 8px;
+  }
+  .db-sidebar-top {
+    padding: 0 14px 8px;
+  }
+  .db-topbar {
+    height: 40px;
+  }
+  .db-content {
+    padding: 16px 24px 48px;
   }
 }
