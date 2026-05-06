@@ -11,7 +11,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { getSupabase } from "@/lib/supabase";
 import ReadAloud from "./ReadAloud";
@@ -80,6 +80,21 @@ export default function LessonLayout({
   const lang = isEn ? "en" : "es";
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [readingProgress, setReadingProgress] = useState(0);
+
+  /* ── Reading progress tracking ── */
+  useEffect(() => {
+    function updateProgress() {
+      const el = document.documentElement;
+      const scrollTop = el.scrollTop || document.body.scrollTop;
+      const scrollHeight = el.scrollHeight - el.clientHeight;
+      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      setReadingProgress(Math.min(100, Math.max(0, progress)));
+    }
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+    return () => window.removeEventListener("scroll", updateProgress);
+  }, []);
 
   /* ── Route parsing ── */
   const parts = pathname.split("/").filter(Boolean);
@@ -149,6 +164,9 @@ export default function LessonLayout({
 
   return (
     <div className="lesson-page">
+      {/* ── Reading Progress ── */}
+      <div className="reading-progress" style={{ width: `${readingProgress}%` }} aria-hidden="true" />
+
       {/* ── Breadcrumb ── */}
       <nav className="breadcrumb animate-fade-up" role="navigation" aria-label="Breadcrumb">
         <Link href={isEn ? "/en" : "/"}>{isEn ? "Home" : "Inicio"}</Link>

@@ -11,6 +11,7 @@ interface AuthState {
   isSuperAdmin: boolean;
   isStudent: boolean;
   isParent: boolean;
+  isSuspended: boolean;
   role: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -26,6 +27,7 @@ const AuthContext = createContext<AuthState>({
   isSuperAdmin: false,
   isStudent: false,
   isParent: false,
+  isSuspended: false,
   role: null,
   loading: true,
   login: async () => {},
@@ -44,12 +46,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [isSuspended, setIsSuspended] = useState(false);
+
   function deriveRoles(r: string) {
     setIsAdmin(r === "admin" || r === "super_admin");
     setIsCatechist(r === "catechist" || r === "admin" || r === "super_admin");
     setIsSuperAdmin(r === "super_admin");
     setIsStudent(r === "user" || r === "student");
     setIsParent(r === "parent");
+    setIsSuspended(r === "suspended");
     setRole(r);
   }
 
@@ -76,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null); setIsLoggedIn(false);
         setIsAdmin(false); setIsCatechist(false); setIsSuperAdmin(false);
-        setIsStudent(false); setIsParent(false); setRole(null);
+        setIsStudent(false); setIsParent(false); setIsSuspended(false); setRole(null);
       }
     });
 
@@ -108,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, isAdmin, isCatechist, isSuperAdmin, isStudent, isParent, role, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, isAdmin, isCatechist, isSuperAdmin, isStudent, isParent, isSuspended, role, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

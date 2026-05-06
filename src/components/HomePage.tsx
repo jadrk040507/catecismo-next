@@ -77,7 +77,7 @@ export default function HomePage({ lang }: { lang?: string }) {
         <h1 className="animate-fade-up">
           {actualLang === "en" ? "Catechism" : "Catecismo"}
         </h1>
-        <p className="stagger-1 animate-fade-up" style={{ maxWidth: 480, margin: "0 auto 24px" }}>
+        <p className="stagger-1" style={{ maxWidth: 480, margin: "0 auto 24px" }}>
           {actualLang === "en"
             ? "Catholic formation, free, for everyone. Based on the Catechism of the Catholic Church."
             : "Formación católica, gratuita, para todos. Basado en el Catecismo de la Iglesia Católica."}
@@ -97,7 +97,7 @@ export default function HomePage({ lang }: { lang?: string }) {
         </div>
 
         {/* CTAs */}
-        <div className="stagger-3 animate-fade-up" style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+        <div className="stagger-3" style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <Link href={actualLang === "en" ? "/en/credo" : "/es/credo"} className="btn btn-primary">
             {actualLang === "en" ? "Explore lessons" : "Explorar clases"}
           </Link>
@@ -132,8 +132,8 @@ export default function HomePage({ lang }: { lang?: string }) {
             <Link
               key={section.href}
               href={actualLang === "en" ? section.enHref : section.href}
-              className="topic-card animate-fade-up"
-              style={{ animationDelay: `${0.05 + i * 0.06}s`, opacity: 0 }}
+              className="topic-card"
+              style={{ animationDelay: `${0.05 + i * 0.06}s` }}
             >
               <div className="topic-card-icon">{section.icon}</div>
               <h3>{section.title[actualLang as keyof typeof section.title]}</h3>
@@ -160,7 +160,7 @@ export default function HomePage({ lang }: { lang?: string }) {
           </div>
           <div className="feature-grid">
             {features.map((f, i) => (
-              <div key={i} className="feature-card animate-fade-up" style={{ animationDelay: `${0.1 + i * 0.08}s`, opacity: 0 }}>
+              <div key={i} className="feature-card" style={{ animationDelay: `${0.1 + i * 0.08}s` }}>
                 <div className="feature-card-icon">{f.icon}</div>
                 <h3>{f.title[actualLang as keyof typeof f.title]}</h3>
                 <p>{f.desc[actualLang as keyof typeof f.desc]}</p>

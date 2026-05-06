@@ -117,6 +117,101 @@ export function usePromoteUser(refetch: () => void) {
   return { promote, pending };
 }
 
+// ─── useCreateUser (super_admin) ────────────────────────────────────────────
+
+export function useCreateUser(refetch: () => void) {
+  const [pending, setPending] = useState(false);
+
+  async function createUser(opts: {
+    email: string;
+    password: string;
+    full_name: string;
+    role: string;
+  }) {
+    setPending(true);
+    try {
+      // Use GoTrue Admin API to create user without affecting current session
+      const { adminCreateUser } = await import("@/lib/supabase");
+      const result = await adminCreateUser(opts);
+
+      // Insert/update profile with the correct role
+      const supabase = getSupabase();
+      if (!supabase) throw new Error("No supabase configured");
+
+      const { error: profileError } = await (supabase.from("profiles") as any)
+        .upsert({
+          id: result.id,
+          email: opts.email,
+          full_name: opts.full_name || opts.email.split("@")[0],
+          role: opts.role,
+        }, { onConflict: "id" });
+
+      if (profileError) console.warn("Profile upsert warning:", profileError.message);
+
+      refetch();
+      return result;
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return { createUser, pending };
+}
+
+// ─── useSuspendUser (super_admin) ───────────────────────────────────────────
+
+export function useSuspendUser(refetch: () => void) {
+  const [pending, setPending] = useState(false);
+
+  async function suspend(userId: string) {
+    setPending(true);
+    const supabase = getSupabase();
+    if (!supabase) throw new Error("No supabase configured");
+    const { error } = await (supabase.from("profiles") as any)
+      .update({ role: "suspended" })
+      .eq("id", userId);
+    setPending(false);
+    if (error) throw error;
+    refetch();
+  }
+
+  async function unsuspend(userId: string, previousRole: string) {
+    setPending(true);
+    const supabase = getSupabase();
+    if (!supabase) throw new Error("No supabase configured");
+    const { error } = await (supabase.from("profiles") as any)
+      .update({ role: previousRole })
+      .eq("id", userId);
+    setPending(false);
+    if (error) throw error;
+    refetch();
+  }
+
+  return { suspend, unsuspend, pending };
+}
+
+// ─── useResetPassword (super_admin) ─────────────────────────────────────────
+
+export function useResetPassword() {
+  const [pending, setPending] = useState(false);
+
+  async function resetPassword(email: string) {
+    setPending(true);
+    const supabase = getSupabase();
+    if (!supabase) throw new Error("No supabase configured");
+    // Send password reset email via Supabase auth
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: typeof window !== "undefined"
+        ? `${window.location.origin}/update-password`
+        : undefined,
+    });
+    setPending(false);
+    if (error) throw error;
+  }
+
+  return { resetPassword, pending };
+}
+
 // ─── useRealtimeUsers ────────────────────────────────────────────────────────
 
 export function useRealtimeUsers(onChange: () => void) {

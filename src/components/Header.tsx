@@ -34,9 +34,19 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  // Close mobile menu on route change & lock body scroll
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   function switchLangUrl(targetLang: "es" | "en"): string {
     if (targetLang === "en") {
@@ -65,28 +75,34 @@ export default function Header() {
         {/* Logo */}
         <Link
           href={isEn ? "/en" : "/"}
-          style={{ fontSize: 15, fontWeight: 700, color: "var(--color-primary)", textDecoration: "none", letterSpacing: "-0.02em" }}
+          style={{ fontSize: 15, fontWeight: 700, color: "var(--color-primary)", textDecoration: "none", letterSpacing: "-0.02em", display: "flex", alignItems: "center", minHeight: 44 }}
         >
           Catecismo
         </Link>
 
         {/* Desktop Nav */}
-        <div style={{ display: "flex", alignItems: "center", gap: 2 }} className="hidden md:flex">
+        <div className="hidden md:flex" style={{ alignItems: "center", gap: 2 }}>
           {NAV_ITEMS.map((item) => {
             const href = isEn ? item.hrefEn : item.hrefEs;
-            const active = pathname === href || (href !== "/" && pathname.startsWith(href + "/"));
+            const active = item.hrefEs === "/"
+              ? (pathname === "/" || pathname === "/en" || pathname === "/en/")
+              : (pathname === href || pathname.startsWith(href + "/"));
             return (
               <Link
                 key={href}
                 href={href}
                 style={{
-                  padding: "6px 14px",
+                  padding: "8px 14px",
                   fontSize: 13,
                   fontWeight: active ? 500 : 400,
                   color: active ? "var(--color-primary)" : "var(--color-secondary)",
                   textDecoration: "none",
                   borderRadius: 5,
+                  minHeight: 36,
+                  display: "flex",
+                  alignItems: "center",
                   transition: "color 0.15s, background 0.15s",
+                  touchAction: "manipulation",
                 }}
                 onMouseEnter={(e) => { if (!active) { e.currentTarget.style.color = "var(--color-primary)"; e.currentTarget.style.background = "var(--color-hover)"; } }}
                 onMouseLeave={(e) => { if (!active) { e.currentTarget.style.color = "var(--color-secondary)"; e.currentTarget.style.background = "transparent"; } }}
@@ -98,22 +114,22 @@ export default function Header() {
         </div>
 
         {/* Right side */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
           {/* Language Switcher */}
           <div className="lang-switcher">
             <Link href={switchLangUrl("es")} className={!isEn ? "active" : ""}>ES</Link>
             <Link href={switchLangUrl("en")} className={isEn ? "active" : ""}>EN</Link>
           </div>
 
-          {/* Auth */}
+          {/* Auth - Desktop */}
           {isLoggedIn ? (
-            <div ref={dropdownRef} style={{ position: "relative" }}>
+            <div ref={dropdownRef} style={{ position: "relative" }} className="hidden md:block">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 style={{
                   display: "flex", alignItems: "center", gap: 8,
                   padding: "4px 8px", borderRadius: 8, border: "none",
-                  background: "transparent", cursor: "pointer",
+                  background: "transparent", cursor: "pointer", minHeight: 44, minWidth: 44,
                 }}
               >
                 <div className="avatar avatar-sm" style={{ background: "var(--color-primary)" }}>
@@ -134,7 +150,7 @@ export default function Header() {
                     <Link
                       href={isEn ? "/en/dashboard" : "/dashboard"}
                       onClick={() => setDropdownOpen(false)}
-                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-primary)", textDecoration: "none", borderRadius: 4 }}
+                      style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-primary)", textDecoration: "none", borderRadius: 4, minHeight: 44 }}
                       onMouseEnter={(e) => e.currentTarget.style.background = "var(--color-hover)"}
                       onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                     >
@@ -145,7 +161,7 @@ export default function Header() {
                   <Link
                     href={isEn ? "/en/dashboard" : "/dashboard"}
                     onClick={() => setDropdownOpen(false)}
-                    style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-primary)", textDecoration: "none", borderRadius: 4 }}
+                    style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-primary)", textDecoration: "none", borderRadius: 4, minHeight: 44 }}
                     onMouseEnter={(e) => e.currentTarget.style.background = "var(--color-hover)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                   >
@@ -155,7 +171,7 @@ export default function Header() {
                   <div style={{ borderTop: "1px solid var(--color-border-light)", margin: "4px 0" }} />
                   <button
                     onClick={() => { logout(); setDropdownOpen(false); }}
-                    style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-red)", background: "transparent", border: "none", cursor: "pointer", width: "100%", textAlign: "left", borderRadius: 4 }}
+                    style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 16px", fontSize: 13, color: "var(--color-red)", background: "transparent", border: "none", cursor: "pointer", width: "100%", textAlign: "left", borderRadius: 4, minHeight: 44 }}
                     onMouseEnter={(e) => e.currentTarget.style.background = "var(--color-red-soft)"}
                     onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                   >
@@ -168,7 +184,7 @@ export default function Header() {
           ) : (
             <Link
               href={isEn ? "/en/login" : "/login"}
-              className="btn btn-secondary btn-sm"
+              className="btn btn-secondary btn-sm hidden md:inline-flex"
             >
               {isEn ? "Login" : "Ingresar"}
             </Link>
@@ -178,41 +194,86 @@ export default function Header() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="md:hidden"
-            style={{ padding: 8, border: "none", background: "transparent", cursor: "pointer", color: "var(--color-secondary)", minWidth: 44, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center" }}
-            aria-label="Toggle menu"
+            style={{ padding: 8, border: "none", background: "transparent", cursor: "pointer", color: "var(--color-secondary)", minWidth: 44, minHeight: 44, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--radius-sm)" }}
+            aria-label={mobileOpen ? (isEn ? "Close menu" : "Cerrar menú") : (isEn ? "Open menu" : "Abrir menú")}
+            aria-expanded={mobileOpen}
           >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile Nav */}
+      {/* Mobile menu overlay */}
       {mobileOpen && (
-        <div style={{ paddingBottom: 16, paddingTop: 8, borderTop: "1px solid var(--color-border-light)" }}>
-          {NAV_ITEMS.map((item) => {
-            const href = isEn ? item.hrefEn : item.hrefEs;
-            const active = pathname === href || pathname.startsWith(href + "/");
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setMobileOpen(false)}
-                style={{
-                  display: "block", padding: "14px 16px", fontSize: 14,
-                  fontWeight: active ? 500 : 400,
-                  color: active ? "var(--color-primary)" : "var(--color-secondary)",
-                  textDecoration: "none", borderRadius: 5,
-                  transition: "background 0.15s",
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = "var(--color-hover)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
-              >
-                {item.label[lang]}
-              </Link>
-            );
-          })}
-        </div>
+        <div className="site-header-mobile-overlay open" onClick={() => setMobileOpen(false)} />
       )}
+
+      {/* Mobile Nav */}
+      <div className={`site-header-mobile-nav${mobileOpen ? " open" : ""}`}>
+        {NAV_ITEMS.map((item) => {
+          const href = isEn ? item.hrefEn : item.hrefEs;
+          const active = item.hrefEs === "/"
+            ? (pathname === "/" || pathname === "/en" || pathname === "/en/")
+            : (pathname === href || pathname.startsWith(href + "/"));
+          return (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setMobileOpen(false)}
+              className={active ? "active" : ""}
+            >
+              {item.label[lang]}
+            </Link>
+          );
+        })}
+
+        {/* Mobile auth section */}
+        <div className="site-header-mobile-auth">
+          {isLoggedIn ? (
+            <>
+              <Link
+                href={isEn ? "/en/dashboard" : "/dashboard"}
+                onClick={() => setMobileOpen(false)}
+                style={{ color: "var(--color-primary)", background: "var(--color-neutral)" }}
+              >
+                {isEn ? "My Progress" : "Mi Progreso"}
+              </Link>
+              {isCatechist && (
+                <Link
+                  href={isEn ? "/en/dashboard" : "/dashboard"}
+                  onClick={() => setMobileOpen(false)}
+                  style={{ color: "var(--color-accent)", background: "var(--color-accent-soft)", marginTop: 8 }}
+                >
+                  {isEn ? "Dashboard" : "Panel de Administración"}
+                </Link>
+              )}
+              <button
+                onClick={() => { logout(); setMobileOpen(false); }}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  padding: "12px 16px", minHeight: 48, width: "100%",
+                  fontSize: 15, fontWeight: 500, color: "var(--color-red)",
+                  background: "transparent", border: "1px solid var(--color-red)",
+                  borderRadius: "var(--radius-sm)", cursor: "pointer", fontFamily: "var(--font-sans)",
+                  marginTop: 8,
+                }}
+              >
+                <LogOut size={16} />
+                {isEn ? "Log out" : "Cerrar sesión"}
+              </button>
+            </>
+          ) : (
+            <Link
+              href={isEn ? "/en/login" : "/login"}
+              onClick={() => setMobileOpen(false)}
+              className="btn btn-primary"
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", minHeight: 48 }}
+            >
+              {isEn ? "Login" : "Ingresar"}
+            </Link>
+          )}
+        </div>
+      </div>
     </header>
   );
 }

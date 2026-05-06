@@ -11,6 +11,9 @@ import {
   useLessonStats,
   usePromoteUser,
   useRealtimeUsers,
+  useCreateUser,
+  useSuspendUser,
+  useResetPassword,
 } from "@/hooks/useData";
 import CatechistDashboard from "@/components/CatechistDashboard";
 import ClassDetail from "@/components/ClassDetail";
@@ -33,12 +36,16 @@ import {
   Heart,
   Menu,
   Church,
+  UserPlus,
+  Ban,
+  KeyRound,
+  AlertTriangle,
 } from "lucide-react";
 
 type Tab = "overview" | "users" | "classes" | "content" | "analytics" | "parish" | "settings";
 
 export default function DashboardPage() {
-  const { isLoggedIn, isAdmin, isCatechist, isSuperAdmin, isStudent, isParent, user, loading: authLoading, logout } = useAuth();
+  const { isLoggedIn, isAdmin, isCatechist, isSuperAdmin, isStudent, isParent, isSuspended, user, loading: authLoading, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const isEn = pathname.startsWith("/en");
@@ -49,6 +56,8 @@ export default function DashboardPage() {
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+  const [showCreateUser, setShowCreateUser] = useState(false);
+  const [suspendedRoles, setSuspendedRoles] = useState<Record<string, string>>({});
 
   // Toggle body scroll lock when sidebar is open on mobile
   useEffect(() => {
@@ -67,6 +76,9 @@ export default function DashboardPage() {
   }, [refetchUsers, refetchStats]);
 
   const { promote, pending: promotePending } = usePromoteUser(handleChange);
+  const { createUser, pending: createPending } = useCreateUser(handleChange);
+  const { suspend, unsuspend, pending: suspendPending } = useSuspendUser(handleChange);
+  const { resetPassword, pending: resetPending } = useResetPassword();
   useRealtimeUsers(handleChange);
 
   const isLoading = statsLoading || usersLoading;
@@ -102,19 +114,28 @@ export default function DashboardPage() {
     }
   }
 
-  // Delete user (super_admin only)
+  // Delete user (super_admin only) — removes from auth AND profile
   async function handleDeleteUser(userId: string) {
-    if (!confirm(isEn ? "Delete this user permanently?" : "¿Eliminar este usuario permanentamente?")) return;
+    if (!confirm(isEn ? "Delete this user permanently?" : "¿Eliminar este usuario permanentemente?")) return;
     try {
       const s = getSupabase();
       if (!s) throw new Error("No supabase configured");
+      // Remove from related tables first
       await Promise.all([
         (s.from("class_students") as any).delete().eq("student_id", userId),
         (s.from("class_catechists") as any).delete().eq("catechist_id", userId),
         (s.from("lesson_progress") as any).delete().eq("user_id", userId),
         (s.from("parent_child_links") as any).delete().or(`parent_id.eq.${userId},child_id.eq.${userId}`),
       ]);
+      // Delete profile
       await (s.from("profiles") as any).delete().eq("id", userId);
+      // Delete auth user via admin API
+      try {
+        const { adminDeleteUser } = await import("@/lib/supabase");
+        await adminDeleteUser(userId);
+      } catch (e) {
+        console.warn("Auth user deletion warning:", e);
+      }
       refetchUsers();
       refetchStats();
       showMessage(isEn ? "User deleted" : "Usuario eliminado");
@@ -169,6 +190,7 @@ export default function DashboardPage() {
       catechist: { es: "Catequista", en: "Catechist" },
       student: { es: "Estudiante", en: "Student" },
       parent: { es: "Padre/Tutor", en: "Parent/Guardian" },
+      suspended: { es: "Suspendido", en: "Suspended" },
       myLearning: { es: "Mi Aprendizaje", en: "My Learning" },
       myChildren: { es: "Mis Hijos", en: "My Children" },
       dashboard: { es: "Dashboard", en: "Dashboard" },
@@ -181,6 +203,22 @@ export default function DashboardPage() {
       permAdmin: { es: "Panel de administración", en: "Admin panel" },
       welcomeBack: { es: "Bienvenido de vuelta", en: "Welcome back" },
       parish: { es: "Parroquia", en: "Parish" },
+      create: { es: "Crear usuario", en: "Create user" },
+      suspend: { es: "Suspender", en: "Suspend" },
+      unsuspend: { es: "Reactivar", en: "Reactivate" },
+      resetPw: { es: "Reset contraseña", en: "Reset password" },
+      resetPwSent: { es: "Email de reset enviado", en: "Reset email sent" },
+      suspendedMsg: { es: "Tu cuenta ha sido suspendida. Contacta al administrador.", en: "Your account has been suspended. Contact the administrator." },
+      newUser: { es: "Nuevo usuario", en: "New user" },
+      emailLbl: { es: "Correo electrónico", en: "Email" },
+      nameLbl: { es: "Nombre completo", en: "Full name" },
+      passwordLbl: { es: "Contraseña", en: "Password" },
+      roleLbl: { es: "Rol", en: "Role" },
+      createBtn: { es: "Crear", en: "Create" },
+      cancel: { es: "Cancelar", en: "Cancel" },
+      userCreated: { es: "Usuario creado", en: "User created" },
+      confirmSuspend: { es: "¿Suspender este usuario? Podrá reactivarse después.", en: "Suspend this user? They can be reactivated later." },
+      confirmUnsuspend: { es: "¿Reactivar este usuario?", en: "Reactivate this user?" },
     }) as Record<string, { es: string; en: string }>)[key]?.[isEn ? "en" : "es"] || key;
 
   // Role badge component
@@ -191,6 +229,7 @@ export default function DashboardPage() {
       catechist: { label: t("catechist"), className: "badge badge-accent", icon: <UserCheck size={11} /> },
       student: { label: t("student"), className: "badge badge-green", icon: <GraduationCap size={11} /> },
       parent: { label: t("parent"), className: "badge badge-neutral", icon: <Heart size={11} /> },
+      suspended: { label: t("suspended"), className: "badge badge-red", icon: <Ban size={11} /> },
     };
     const c = config[role] || config.student;
     return <span className={c.className}>{c.icon} {c.label}</span>;
@@ -241,6 +280,24 @@ export default function DashboardPage() {
   }
 
   if (!isLoggedIn) return null;
+
+  // ─── Suspended account banner ────────────────────────────────────────
+  if (isSuspended) {
+    return (
+      <div className="db-layout">
+        <div className="db-main">
+          <div className="db-content" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80vh", textAlign: "center", padding: 32 }}>
+            <AlertTriangle size={48} style={{ color: "var(--color-red)", marginBottom: 16 }} />
+            <h1>{t("suspended")}</h1>
+            <p style={{ color: "var(--color-secondary)", marginTop: 8, maxWidth: 360 }}>{t("suspendedMsg")}</p>
+            <button className="db-btn primary" style={{ marginTop: 24 }} onClick={logout}>
+              <LogOut size={14} /> {t("logout")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ─── Student view ────────────────────────────────────────────
   if (isStudent && !isCatechist) {
@@ -506,6 +563,11 @@ export default function DashboardPage() {
                       <h1>{t("users")}</h1>
                       <p className="db-subtitle">{users.length} {isEn ? "registered" : "registrados"}</p>
                     </div>
+                    {isSuperAdmin && (
+                      <button className="db-btn primary" onClick={() => setShowCreateUser(true)}>
+                        <UserPlus size={14} /> {t("create")}
+                      </button>
+                    )}
                   </div>
 
                   <input className="db-search" placeholder={t("search")} value={search} onChange={e => setSearch(e.target.value)} style={{ marginTop: 16 }} />
@@ -524,18 +586,34 @@ export default function DashboardPage() {
                           </tr>
                         </thead>
                         <tbody>
-                          {filteredUsers.map(u => (
-                            <tr key={u.id}>
-                              <td data-label={t("name")} style={{ fontWeight: 500 }}>{u.full_name || "—"}</td>
+                          {filteredUsers.map(u => {
+                            const isSuspendedUser = u.role === "suspended";
+                            const prevRole = suspendedRoles[u.id] || "user";
+                            return (
+                            <tr key={u.id} style={isSuspendedUser ? { opacity: 0.6 } : undefined}>
+                              <td data-label={t("name")} style={{ fontWeight: 500 }}>
+                                {u.full_name || "—"}
+                                {isSuspendedUser && <span style={{ marginLeft: 6, fontSize: 10, color: "var(--color-red)" }}>● {t("suspended")}</span>}
+                              </td>
                               <td data-label={t("email")}>{u.email}</td>
                               <td data-label={t("role")}>
                                 {isSuperAdmin ? (
-                                  <select className="db-inline-select" value={u.role} onChange={e => handleRoleChange(u.id, e.target.value)} aria-label={t("role")}>
+                                  <select className="db-inline-select" value={u.role} onChange={e => {
+                                    const newRole = e.target.value;
+                                    if (newRole === "suspended") {
+                                      // Save previous role before suspending
+                                      setSuspendedRoles(prev => ({ ...prev, [u.id]: u.role }));
+                                      handleRoleChange(u.id, "suspended");
+                                    } else {
+                                      handleRoleChange(u.id, newRole);
+                                    }
+                                  }} aria-label={t("role")}>
                                     <option value="user">{t("student")}</option>
                                     <option value="catechist">{t("catechist")}</option>
                                     <option value="parent">{t("parent")}</option>
                                     <option value="admin">{t("admin")}</option>
                                     <option value="super_admin">{t("superAdmin")}</option>
+                                    <option value="suspended">{t("suspended")}</option>
                                   </select>
                                 ) : (
                                   <RoleBadge role={u.role || "user"} />
@@ -545,9 +623,33 @@ export default function DashboardPage() {
                               <td data-label={t("lastActive")}>{u.last_active?.split("T")[0] || "—"}</td>
                               <td data-label="">
                                 <div className="db-btn-group" style={{ justifyContent: "flex-end" }}>
-                                  {isAdmin && !["admin", "super_admin"].includes(u.role) && (
+                                  {isAdmin && !["admin", "super_admin"].includes(u.role) && !isSuspendedUser && (
                                     <button className="db-btn sm primary" onClick={() => handlePromote(u.id)} disabled={promotePending}>
                                       {t("promote")}
+                                    </button>
+                                  )}
+                                  {isSuperAdmin && !isSuspendedUser && (
+                                    <button className="db-btn sm" onClick={() => {
+                                      if (confirm(t("confirmSuspend"))) {
+                                        setSuspendedRoles(prev => ({ ...prev, [u.id]: u.role }));
+                                        suspend(u.id);
+                                      }
+                                    }} disabled={suspendPending}>
+                                      <Ban size={12} /> {t("suspend")}
+                                    </button>
+                                  )}
+                                  {isSuperAdmin && isSuspendedUser && (
+                                    <button className="db-btn sm primary" onClick={() => {
+                                      if (confirm(t("confirmUnsuspend"))) unsuspend(u.id, prevRole);
+                                    }} disabled={suspendPending}>
+                                      {t("unsuspend")}
+                                    </button>
+                                  )}
+                                  {isSuperAdmin && (
+                                    <button className="db-btn sm ghost" onClick={() => {
+                                      resetPassword(u.email).then(() => showMessage(t("resetPwSent"))).catch(() => showMessage("Error", true));
+                                    }} disabled={resetPending}>
+                                      <KeyRound size={12} /> {t("resetPw")}
                                     </button>
                                   )}
                                   {isSuperAdmin && (
@@ -558,7 +660,7 @@ export default function DashboardPage() {
                                 </div>
                               </td>
                             </tr>
-                          ))}
+                          );})}
                         </tbody>
                       </table>
                     </div>
@@ -591,6 +693,24 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {/* ─── Create User Modal ─── */}
+      {showCreateUser && (
+        <CreateUserModal
+          isEn={isEn}
+          onClose={() => setShowCreateUser(false)}
+          onCreated={async (opts) => {
+            try {
+              await createUser(opts);
+              showMessage(isEn ? "User created" : "Usuario creado");
+              setShowCreateUser(false);
+            } catch (e: any) {
+              showMessage(e.message || "Error", true);
+            }
+          }}
+          pending={createPending}
+        />
+      )}
     </div>
   );
 }
@@ -675,6 +795,81 @@ function SettingsPanel({ isEn, user }: { isEn: boolean; user: { email?: string; 
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Create User Modal ──────────────────────────────────────────────────────
+
+function CreateUserModal({
+  isEn,
+  onClose,
+  onCreated,
+  pending,
+}: {
+  isEn: boolean;
+  onClose: () => void;
+  onCreated: (opts: { email: string; password: string; full_name: string; role: string }) => Promise<void>;
+  pending: boolean;
+}) {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [pw, setPw] = useState("");
+  const [role, setRole] = useState("user");
+  const [error, setError] = useState("");
+
+  const t = (k: string) =>
+    (({
+      newUser: { es: "Nuevo usuario", en: "New user" },
+      emailLbl: { es: "Correo electrónico", en: "Email" },
+      nameLbl: { es: "Nombre completo", en: "Full name" },
+      passwordLbl: { es: "Contraseña", en: "Password" },
+      roleLbl: { es: "Rol", en: "Role" },
+      student: { es: "Estudiante", en: "Student" },
+      catechist: { es: "Catequista", en: "Catechist" },
+      parent: { es: "Padre/Tutor", en: "Parent/Guardian" },
+      admin: { es: "Admin", en: "Admin" },
+      superAdmin: { es: "Super Admin", en: "Super Admin" },
+      createBtn: { es: "Crear", en: "Create" },
+      cancel: { es: "Cancelar", en: "Cancel" },
+    }) as Record<string, { es: string; en: string }>)[k]?.[isEn ? "en" : "es"] || k;
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email || !pw || pw.length < 6) {
+      setError(isEn ? "Email and password (6+ chars) required" : "Email y contraseña (6+ caracteres) requeridos");
+      return;
+    }
+    setError("");
+    onCreated({ email, password: pw, full_name: name || email.split("@")[0], role });
+  }
+
+  return (
+    <div className="db-overlay" onClick={onClose}>
+      <div className="db-modal" onClick={e => e.stopPropagation()}>
+        <h2>{t("newUser")}</h2>
+        {error && <div className="db-msg bad">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <label>{t("emailLbl")}</label>
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="user@example.com" />
+          <label>{t("nameLbl")}</label>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder={isEn ? "John Doe" : "Juan Pérez"} />
+          <label>{t("passwordLbl")}</label>
+          <input type="password" value={pw} onChange={e => setPw(e.target.value)} required minLength={6} placeholder="••••••••" />
+          <label>{t("roleLbl")}</label>
+          <select value={role} onChange={e => setRole(e.target.value)}>
+            <option value="user">{t("student")}</option>
+            <option value="catechist">{t("catechist")}</option>
+            <option value="parent">{t("parent")}</option>
+            <option value="admin">{t("admin")}</option>
+            <option value="super_admin">{t("superAdmin")}</option>
+          </select>
+          <div className="db-modal-actions">
+            <button type="button" className="db-btn" onClick={onClose}>{t("cancel")}</button>
+            <button type="submit" className="db-btn primary" disabled={pending}>{pending ? "…" : t("createBtn")}</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

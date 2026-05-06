@@ -14,11 +14,26 @@ const sectionMeta = {
   oracion: { icon: "🙏", title: { es: "La Oración", en: "Prayer" }, desc: { es: "La vida de oración. Cinco clases sobre cómo hablar con Dios.", en: "The life of prayer. Five lessons on how to speak with God." }, count: 5 },
 };
 
+/** Map internal section key to URL segment for each language */
+const sectionUrlMap: Record<string, { es: string; en: string }> = {
+  credo: { es: "credo", en: "creed" },
+  sacramentos: { es: "sacramentos", en: "sacraments" },
+  moral: { es: "moral", en: "moral" },
+  oracion: { es: "oracion", en: "prayer" },
+};
+
 const sectionNav = {
-  credo: { prev: { href: "/es/oracion", enHref: "/en/prayer", label: { es: "Oración", en: "Prayer" } }, next: { href: "/es/sacramentos", enHref: "/en/sacraments", label: { es: "Sacramentos", en: "Sacraments" } } },
-  sacramentos: { prev: { href: "/es/credo", enHref: "/en/credo", label: { es: "Credo", en: "Creed" } }, next: { href: "/es/moral", enHref: "/en/moral", label: { es: "Moral", en: "Moral" } } },
-  moral: { prev: { href: "/es/sacramentos", enHref: "/en/sacraments", label: { es: "Sacramentos", en: "Sacraments" } }, next: { href: "/es/oracion", enHref: "/en/prayer", label: { es: "Oración", en: "Prayer" } } },
-  oracion: { prev: { href: "/es/moral", enHref: "/en/moral", label: { es: "Moral", en: "Moral" } }, next: { href: "/es/credo", enHref: "/en/credo", label: { es: "Credo", en: "Creed" } } },
+  credo: { prev: { es: "oracion", en: "prayer" }, next: { es: "sacramentos", en: "sacraments" } },
+  sacramentos: { prev: { es: "credo", en: "creed" }, next: { es: "moral", en: "moral" } },
+  moral: { prev: { es: "sacramentos", en: "sacraments" }, next: { es: "oracion", en: "prayer" } },
+  oracion: { prev: { es: "moral", en: "moral" }, next: { es: "credo", en: "creed" } },
+};
+
+const sectionLabels = {
+  credo: { es: "Credo", en: "Creed" },
+  sacramentos: { es: "Sacramentos", en: "Sacraments" },
+  moral: { es: "Moral", en: "Moral" },
+  oracion: { es: "Oración", en: "Prayer" },
 };
 
 export default function SectionIndex({ section, topics }: SectionIndexProps) {
@@ -27,6 +42,11 @@ export default function SectionIndex({ section, topics }: SectionIndexProps) {
   const lang = isEn ? "en" : "es";
   const meta = sectionMeta[section];
   const nav = sectionNav[section];
+  const urls = sectionUrlMap[section];
+
+  // Build the correct section path for language switching
+  const esSectionPath = `/es/${urls.es}`;
+  const enSectionPath = `/en/${urls.en}`;
 
   return (
     <div className="section-page animate-fade-up">
@@ -37,8 +57,8 @@ export default function SectionIndex({ section, topics }: SectionIndexProps) {
         <span className="current">{meta.title[lang]}</span>
         <div style={{ marginLeft: "auto" }}>
           <div className="lang-switcher">
-            <Link href={isEn ? `/es/${section === "sacramentos" ? "sacramentos" : section === "oracion" ? "oracion" : section}` : `/es/${section}`} className={!isEn ? "active" : ""}>ES</Link>
-            <Link href={isEn ? `/en/${section === "sacramentos" ? "sacraments" : section === "oracion" ? "prayer" : section}` : `/en/${section === "sacramentos" ? "sacraments" : section === "oracion" ? "prayer" : section}`} className={isEn ? "active" : ""}>EN</Link>
+            <Link href={esSectionPath} className={!isEn ? "active" : ""}>ES</Link>
+            <Link href={enSectionPath} className={isEn ? "active" : ""}>EN</Link>
           </div>
         </div>
       </div>
@@ -87,11 +107,11 @@ export default function SectionIndex({ section, topics }: SectionIndexProps) {
 
       {/* Section navigation */}
       <div className="lesson-nav">
-        <Link href={isEn ? nav.prev.enHref : nav.prev.href}>
-          ← {nav.prev.label[lang]}
+        <Link href={isEn ? `/en/${nav.prev.en}` : `/es/${nav.prev.es}`}>
+          ← {sectionLabels[nav.prev.es as keyof typeof sectionLabels][lang]}
         </Link>
-        <Link href={isEn ? nav.next.enHref : nav.next.href}>
-          {nav.next.label[lang]} →
+        <Link href={isEn ? `/en/${nav.next.en}` : `/es/${nav.next.es}`}>
+          {sectionLabels[nav.next.es as keyof typeof sectionLabels][lang]} →
         </Link>
       </div>
     </div>
