@@ -167,7 +167,7 @@ export default function StudentDashboard({
       {/* Join Class */}
       <div className="db-card" style={{ cursor: "default", marginTop: 20, marginBottom: 24, borderLeft: "3px solid var(--color-accent)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-          <KeyRound size={16} style={{ color: "var(--color-accent)" }} />
+          <span title="Invitation code"><KeyRound size={16} style={{ color: "var(--color-accent)" }} /></span>
           <span style={{ fontWeight: 600, fontSize: 14 }}>{t("joinClass")}</span>
         </div>
         <form className="db-form-row" onSubmit={handleJoinClass}>
@@ -181,7 +181,7 @@ export default function StudentDashboard({
             aria-label={t("joinCodePlaceholder")}
           />
           <button className="db-btn primary" type="submit" disabled={joining || !joinCode.trim()}>
-            <Plus size={14} /> {joining ? "…" : t("join")}
+            <span title="Add new item"><Plus size={14} /></span> {joining ? "…" : t("join")}
           </button>
         </form>
         {joinError && <p style={{ color: "var(--color-red)", fontSize: 12, marginTop: 6 }}>{joinError}</p>}
@@ -193,7 +193,7 @@ export default function StudentDashboard({
         <div className="db-empty"><p>{t("loading")}</p></div>
       ) : classes.length === 0 ? (
         <div className="db-empty">
-          <span className="db-empty-icon"><BookOpen size={40} strokeWidth={1.5} /></span>
+          <span className="db-empty-icon"><span title="View details"><BookOpen size={40} strokeWidth={1.5} /></span></span>
           <p>{t("noClasses")}</p>
           <p className="db-empty-hint">{t("noClassesHint")}</p>
         </div>
@@ -205,7 +205,7 @@ export default function StudentDashboard({
               {cls.description && <div className="db-card-desc">{cls.description}</div>}
               <div className="db-card-footer" style={{ marginTop: 10 }}>
                 <span className="db-badge accent" style={{ fontSize: 12 }}>
-                  <KeyRound size={11} /> {cls.invite_code}
+                  <span title="Invitation code"><KeyRound size={11} /></span> {cls.invite_code}
                 </span>
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function StudentDashboard({
 
   const tabIcons: Record<Tab, React.ReactNode> = {
     overview: <Sparkles size={14} />,
-    "my-classes": <BookOpen size={14} />,
+    "my-classes": <span title="View details"><BookOpen size={14} /></span>,
     progress: <BarChart3 size={14} />,
     achievements: <Trophy size={14} />,
   };

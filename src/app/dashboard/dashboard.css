@@ -642,3 +642,11 @@ html.dashboard-route body {
     padding: 16px 24px 48px;
   }
 }
+
+/* === Polishing Sidebar Shadow === */
+.db-sidebar {
+  box-shadow: var(--shadow-card);
+}
+.db-sidebar:hover {
+  box-shadow: var(--shadow-card-hover);
+}

@@ -184,7 +184,7 @@ export default function ParentDashboard() {
           <p className="db-empty-hint">{t("noChildrenHint")}</p>
           <div className="db-empty-action">
             <button className="db-btn primary" onClick={() => setShowAddChild(true)}>
-              <Plus size={15} /> {t("addChild")}
+              <span title="Add new item"><Plus size={15} /></span> {t("addChild")}
             </button>
           </div>
         </div>
@@ -206,7 +206,7 @@ export default function ParentDashboard() {
           <div className="db-modal-actions">
             <button type="button" className="db-btn" onClick={() => setShowAddChild(false)}>{t("cancel")}</button>
             <button type="submit" className="db-btn primary" disabled={addingChild || !newChildName.trim()}>
-              <Plus size={14} /> {addingChild ? "…" : t("add")}
+              <span title="Add new item"><Plus size={14} /></span> {addingChild ? "…" : t("add")}
             </button>
           </div>
         </form>
@@ -265,7 +265,7 @@ export default function ParentDashboard() {
               className={`db-subtab${childTab === tb ? " active" : ""}`}
               onClick={() => setChildTab(tb)}
             >
-              {tb === "progress" ? <Sparkles size={14} /> : tb === "classes" ? <BookOpen size={14} /> : tb === "sacramental" ? <Cross size={14} /> : <FileText size={14} />}
+              {tb === "progress" ? <Sparkles size={14} /> : tb === "classes" ? <span title="View details"><BookOpen size={14} /></span> : tb === "sacramental" ? <Cross size={14} /> : <FileText size={14} />}
               {t(tb)}
             </button>
           ))}
@@ -386,7 +386,7 @@ export default function ParentDashboard() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
         <h1>{t("myChildren")}</h1>
         <button className="db-btn primary" onClick={() => setShowAddChild(true)}>
-          <Plus size={14} /> {t("addChild")}
+          <span title="Add new item"><Plus size={14} /></span> {t("addChild")}
         </button>
       </div>
 

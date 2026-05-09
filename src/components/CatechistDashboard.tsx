@@ -14,17 +14,7 @@ import {
   type CreateClassInput,
   type UpdateClassInput,
 } from "@/lib/classes";
-import {
-  BookOpen,
-  Users,
-  Book,
-  Pencil,
-  Trash2,
-  KeyRound,
-  AlertTriangle,
-  Plus,
-  Search,
-} from "lucide-react";
+import { BookOpen, Users, Book, Pencil, Trash2, KeyRound, AlertTriangle, Plus, Search, Loader2 } from "lucide-react";
 
 // ─── Tipos locales ───────────────────────────────────────────────────────────
 
@@ -258,9 +248,35 @@ export default function CatechistDashboard({
       showToast(isEn ? "Class deleted." : "Clase eliminada.");
       await loadData();
     } catch (e: any) {
-      setDeleteError(
-        e.message || (isEn ? "Error deleting." : "Error al eliminar.")
-      );
+      let message = "";
+      if (e.message?.includes("Failed to fetch") || e.message?.includes("NetworkError")) {
+        message = isEn
+          ? "Network error. Please check your connection and try again."
+          : "Error de red. Por favor, verifica tu conexión e intenta nuevamente.";
+      } else if (e.status === 401) {
+        message = isEn
+          ? "Authentication error. Please log in again."
+          : "Error de autenticación. Por favor, vuelve a iniciar sesión.";
+      } else if (e.status === 403) {
+        message = isEn
+          ? "Permission denied. You don't have permission to delete this class."
+          : "Permiso denegado. No tienes permiso para eliminar esta clase.";
+      } else if (e.status === 404) {
+        message = isEn
+          ? "Class not found. It may have been deleted already."
+          : "Clase no encontrada. Puede haber sido eliminada ya.";
+      } else if (e.status === 400) {
+        message = isEn
+          ? "Invalid request. Please check your data and try again."
+          : "Solicitud no válida. Por favor, verifica tus datos e intenta nuevamente.";
+      } else if (e.status && e.status >= 500) {
+        message = isEn
+          ? "Server error. Please try again later or contact support."
+          : "Error del servidor. Por favor, intenta más tarde o contacta al soporte.";
+      } else {
+        message = e.message || (isEn ? "Error deleting." : "Error al eliminar.");
+      }
+      setDeleteError(message);
     } finally {
       setDeleting(false);
     }
@@ -378,7 +394,7 @@ export default function CatechistDashboard({
           onClick={openCreateModal}
           aria-label={t("newClass")}
         >
-          <Plus size={15} aria-hidden="true" />
+          <span title="Add new item"><Plus size={15} aria-hidden="true" /></span>
           {t("newClass")}
         </button>
       </div>
@@ -387,96 +403,109 @@ export default function CatechistDashboard({
       {!loading && filtered.length === 0 && (
         <div className="db-empty" role="status">
           <span className="db-empty-icon" aria-hidden="true">
-            <BookOpen size={40} strokeWidth={1.5} />
+            <span title="View details"><BookOpen size={40} strokeWidth={1.5} /></span>
           </span>
           <p>{t("noClasses")}</p>
           <p className="db-empty-hint">{t("noClassesHint")}</p>
           <div className="db-empty-action">
             <button
-              className="db-btn primary"
+              className="db-btn primary pulse-animate"
               onClick={openCreateModal}
               aria-label={t("newClass")}
             >
-              <Plus size={15} aria-hidden="true" />
+              <span title="Add new item"><Plus size={0} aria-hidden="true" /></span>
               {t("newClass")}
             </button>
+            <p className="db-empty-onboarding hint-text">
+              {isEn ? "This creates your first class where you can add students and lessons." : "Esto crea tu primera clase donde puedes agregar estudiantes y lecciones."}
+            </p>
           </div>
         </div>
       )}
 
       {/* ─── CLASS CARDS GRID ─── */}
-      {filtered.length > 0 && (
-        <div className="db-cards">
-          {filtered.map((cls) => {
-            const count = cls.student_count || 0;
-            const studentLabel =
-              count === 1 ? t("student_one") : t("students");
-            return (
-              <article
-                key={cls.id}
-                className="db-card"
-                onClick={() => goToClass(cls.id)}
-                role="button"
-                tabIndex={0}
-                aria-label={`${cls.name} — ${count} ${studentLabel}`}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    goToClass(cls.id);
-                  }
-                }}
-              >
-                <div className="db-card-title">{cls.name}</div>
-                {cls.description && (
-                  <div className="db-card-desc">{cls.description}</div>
-                )}
-                <div className="db-card-meta">
-                  <span className="db-card-meta-item">
-                    <Users size={13} aria-hidden="true" />
-                    {count} {studentLabel}
-                  </span>
-                  {cls.course_name && (
-                    <span className="db-card-meta-item">
-                      <Book size={13} aria-hidden="true" />
-                      {cls.course_name}
-                    </span>
-                  )}
-                </div>
-                <div className="db-card-footer">
-                  <span className="db-badge accent">
-                    <KeyRound size={11} aria-hidden="true" />
-                    {cls.invite_code}
-                  </span>
-                  <div className="db-btn-group">
-                    <button
-                      className="db-btn sm ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openEditModal(cls);
-                      }}
-                      aria-label={t("edit")}
-                    >
-                      <Pencil size={14} aria-hidden="true" />
-                    </button>
-                    <button
-                      className="db-btn sm ghost danger"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingClass(cls);
-                        setShowDeleteConfirm(true);
-                      }}
-                      aria-label={t("delete")}
-                    >
-                      <Trash2 size={14} aria-hidden="true" />
-                    </button>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      )}
-
+          {filtered.length > 0 && (
+            <div className="db-cards">
+              {filtered.map((cls) => {
+                const count = cls.student_count || 0;
+                const studentLabel =
+                  count === 1 ? t("student_one") : t("students");
+                return (
+                  <article
+                    key={cls.id}
+                    className="db-card"
+                    onClick={() => goToClass(cls.id)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${cls.name} — ${count} ${studentLabel}`}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        goToClass(cls.id);
+                      }
+                    }}
+                  >
+                    <div className="db-card-title">{cls.name}</div>
+                    {cls.description && (
+                      <div className="db-card-desc">{cls.description}</div>
+                    )}
+                    <div className="db-card-meta">
+                      <span className="db-card-meta-item">
+                        <span title="Manage users"><Users size={13} aria-hidden="true" /></span>
+                        {count} {studentLabel}
+                      </span>
+                      {cls.course_name && (
+                        <span className="db-card-meta-item">
+                          <Book size={13} aria-hidden="true" />
+                          {cls.course_name}
+                        </span>
+                      )}
+                    </div>
+                    <div className="db-card-footer">
+                      <span className="db-badge accent">
+                        <span title="Invitation code"><KeyRound size={11} aria-hidden="true" /></span>
+                        {cls.invite_code}
+                      </span>
+                      <div className="db-btn-group">
+                        <button
+                          className="db-btn sm ghost"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openEditModal(cls);
+                          }}
+                          aria-label={t("edit")}
+                        >
+                          <span title="Edit item"><Pencil size={14} aria-hidden="true" /></span>
+                        </button>
+                        <button
+                          className="db-btn sm ghost danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingClass(cls);
+                            setShowDeleteConfirm(true);
+                          }}
+                          disabled={deleting}
+                          aria-label={t("delete")}
+                        >
+                          {deleting ? (
+                            <>
+                              <Loader2 size={14} aria-hidden="true" />
+                              <span className="ml-2">{t("delete")}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span title="Delete item"><Trash2 size={14} aria-hidden="true" /></span>
+                              {t("delete")}
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
       {/* ═══════════════════════════════════════════════════════════════
          CREATE CLASS MODAL
          ═══════════════════════════════════════════════════════════════ */}

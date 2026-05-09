@@ -47,6 +47,7 @@ export default function ContentManager() {
   const [quizPassingScore, setQuizPassingScore] = useState(70);
   const [existingQuiz, setExistingQuiz] = useState<Quiz | null>(null);
   const [savingQuiz, setSavingQuiz] = useState(false);
+  const [deletingQuiz, setDeletingQuiz] = useState(false);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -142,6 +143,7 @@ export default function ContentManager() {
   async function handleDeleteQuiz() {
     if (!existingQuiz) return;
     if (!confirm(isEn ? "Delete this quiz?" : "¿Eliminar este examen?")) return;
+    setDeletingQuiz(true);
     try {
       await deleteQuiz(existingQuiz.id);
       setExistingQuiz(null);
@@ -150,7 +152,37 @@ export default function ContentManager() {
       setQuizQuestions([{ id: "1", type: "multiple_choice", question: "", options: ["", "", "", ""], correct_answer: "", explanation: "" }]);
       showToast(isEn ? "Quiz deleted." : "Examen eliminado.");
     } catch (e: any) {
-      showToast(e.message || "Error deleting quiz.");
+      let message = "";
+      if (e.message?.includes("Failed to fetch") || e.message?.includes("NetworkError")) {
+        message = isEn
+          ? "Network error. Please check your connection and try again."
+          : "Error de red. Por favor, verifica tu conexión e intenta nuevamente.";
+      } else if (e.status === 401) {
+        message = isEn
+          ? "Authentication error. Please log in again."
+          : "Error de autenticación. Por favor, vuelve a iniciar sesión.";
+      } else if (e.status === 403) {
+        message = isEn
+          ? "Permission denied. You don't have permission to delete this quiz."
+          : "Permiso denegado. No tienes permiso para eliminar este examen.";
+      } else if (e.status === 404) {
+        message = isEn
+          ? "Quiz not found. It may have been deleted already."
+          : "Examen no encontrado. Puede haber sido eliminado ya.";
+      } else if (e.status === 400) {
+        message = isEn
+          ? "Invalid request. Please check your data and try again."
+          : "Solicitud no válida. Por favor, verifica tus datos e intenta nuevamente.";
+      } else if (e.status && e.status >= 500) {
+        message = isEn
+          ? "Server error. Please try again later or contact support."
+          : "Error del servidor. Por favor, intenta más tarde o contacta al soporte.";
+      } else {
+        message = e.message || (isEn ? "Error deleting quiz." : "Error al eliminar el examen.");
+      }
+      showToast(message);
+    } finally {
+      setDeletingQuiz(false);
     }
   }
 
@@ -189,14 +221,24 @@ export default function ContentManager() {
   return (
     <div>
       <h1 style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
-        <BookOpen size={22} style={{ color: "var(--color-accent)" }} aria-hidden="true" />
+        <span title="View details"><BookOpen size={22} style={{ color: "var(--color-accent)" }} aria-hidden="true" /></span>
         {isEn ? "Content Manager" : "Gestión de Contenido"}
       </h1>
 
       <nav className="db-subtabs" role="tablist">
         {(["classes", "quizzes"] as Tab[]).map((tb) => (
           <button key={tb} role="tab" aria-selected={tab === tb} onClick={() => setTab(tb)} className={`db-subtab${tab === tb ? " active" : ""}`}>
-            {tb === "classes" ? <BookOpen size={14} /> : <FileQuestion size={14} />} {t(tb)}
+            {tb === "classes" ? (
+              <>
+                <span title="View details"><BookOpen size={14} /></span>
+                {t(tb)}
+              </>
+            ) : (
+              <>
+                <span title="Quiz management"><FileQuestion size={14} /></span>
+                {t(tb)}
+              </>
+            )}
           </button>
         ))}
       </nav>
@@ -233,8 +275,22 @@ export default function ContentManager() {
             <div className="db-card" style={{ cursor: "default", marginBottom: 16, border: "1px solid var(--color-accent)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: 13, color: "var(--color-accent)", fontWeight: 500 }}>⚠️ {t("quizExists")}</span>
-                <button className="db-btn sm danger ghost" onClick={handleDeleteQuiz}>
-                  <Trash2 size={13} /> {t("delete")}
+                <button
+                  className="db-btn sm danger ghost"
+                  onClick={handleDeleteQuiz}
+                  disabled={deletingQuiz}
+                >
+                  {deletingQuiz ? (
+                    <>
+                      <Loader2 size={13} aria-hidden="true" />
+                      <span className="ml-1">{t("delete")}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span title="Delete item"><Trash2 size={13} /></span>
+                      {t("delete")}
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -325,7 +381,7 @@ export default function ContentManager() {
             ))}
 
             <button type="button" className="db-btn" onClick={addQuestion} style={{ marginBottom: 20 }}>
-              <Plus size={14} /> {t("addQuestion")}
+              <span title="Add new item"><Plus size={14} /></span> {t("addQuestion")}
             </button>
 
             <div className="db-modal-actions">
